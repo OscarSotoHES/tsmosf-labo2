@@ -1,7 +1,11 @@
+# --- !Ups
+create database if not exists db_tsmosf_labo2;
+grant all on db_tsmosf_labo2.* to adm_tsmosf_labo2@'localhost' identified by 'tsmosf_labo2';
+flush privileges;
 # Student schema
  
 # --- !Ups
-create table Student
+create table if not exists Student
 (
 	id bigint primary key not null AUTO_INCREMENT,
 	name varchar(128) not null
@@ -11,7 +15,7 @@ create table Student
 # Lesson schema
  
 # --- !Ups
-create table Lesson
+create table if not exists Lesson
 (
 	id bigint primary key not null AUTO_INCREMENT,
 	name varchar(128) not null
@@ -21,7 +25,7 @@ create table Lesson
 # StudentLesson schema
  
 # --- !Ups
-create table StudentLesson
+create table if not exists StudentLesson
 (
 	id bigint primary key not null AUTO_INCREMENT,
 	student_id bigint references Student(id),
