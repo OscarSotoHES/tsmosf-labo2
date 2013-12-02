@@ -1,5 +1,4 @@
-FORMAT: 1A
-HOST: http://www.google.com
+HOST: https://app.apiary.io/schoolapi
 
 # SchoolAPI
 School API is a *simple API* that allow to manage students and courses.
