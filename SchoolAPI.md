@@ -1,4 +1,4 @@
-HOST: https://app.apiary.io/schoolapi
+HOST: https://schoolapi.apiary.io/
 
 # SchoolAPI
 School API is a *simple API* that allow to manage students and courses.
