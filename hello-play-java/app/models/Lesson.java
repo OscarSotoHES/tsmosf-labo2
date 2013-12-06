@@ -1,5 +1,8 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //import java.util.*;
 //import javax.persistence.*;
 //
@@ -11,6 +14,7 @@ package models;
 
 public class Lesson implements IDataRecord{
 
+	private List<StudentLesson> lessons=new ArrayList<>();
 	private Long id;
 	private String name;
 	public Lesson() {
@@ -38,6 +42,34 @@ public class Lesson implements IDataRecord{
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public StudentLesson add(Student argv){
+		return addStudent(argv.getId());
+		
+	}
+	public StudentLesson addStudent(long argv){
+		StudentLesson o = findStudent(argv);
+		if(o!=null)
+			return o;
+		o=new StudentLesson(this.getId(), argv);
+		lessons.add(o);
+		return o;
+	}
+	public StudentLesson findStudent(long argv){
+		int i = indexOfStudent(argv);
+		if(i<0)
+			return null;
+		return lessons.get(i);
+	}
+	public int indexOfStudent(long argv){
+		if(lessons==null ||lessons.isEmpty())
+			return -1;
+		//Long v=Long.valueOf(argv);
+		for(int i=0; i<lessons.size(); i++)
+			if(argv==lessons.get(i).getId())
+				return i;
+		return -1;
 	}
 
 }
