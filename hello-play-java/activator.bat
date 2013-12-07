@@ -8,6 +8,8 @@
 @setlocal enabledelayedexpansion
 
 @echo off
+if exist "e:\sunapp\java-x86-64\env-vars.cmd" call "e:\sunapp\java-x86-64\env-vars.cmd"
+
 if "%ACTIVATOR_HOME%"=="" set "ACTIVATOR_HOME=%~dp0"
 set ERROR_CODE=0
 set APP_VERSION=1.0.8

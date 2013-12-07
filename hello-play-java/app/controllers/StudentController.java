@@ -16,7 +16,7 @@ import models.StudentLesson;
 public class StudentController extends AbstractRecordController<Student> {
 
     private static Class<?> thisClass=StudentController.class;
-    private static List<Student> items=new ArrayList<>();
+    private static List<Student> items=new ArrayList<Student>();
     static {
     	Student o=null;
     	for(int i=0; i<10; i++){
@@ -26,6 +26,7 @@ public class StudentController extends AbstractRecordController<Student> {
 //    			o.add();
 //    		}
     	}
+    	//play.db.jpa.JPA
     }
     public static Result index() {
         //return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".index"));

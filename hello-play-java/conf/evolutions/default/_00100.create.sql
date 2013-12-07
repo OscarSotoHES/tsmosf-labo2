@@ -1,6 +1,6 @@
 # --- !Ups
 create database if not exists db_tsmosf_labo2;
-grant all on db_tsmosf_labo2.* to adm_tsmosf_labo2@'localhost' identified by 'tsmosf_labo2';
+grant all on db_tsm_osf_labo_2.* to adm_tsmosf_labo2@'localhost' identified by 'tsmosf_labo2';
 flush privileges;
 # Student schema
  

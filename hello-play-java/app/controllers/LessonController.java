@@ -12,7 +12,7 @@ public class LessonController extends Controller {
 
     private static Class<?> thisClass=LessonController.class;
     
-    private static List<Lesson> items=new ArrayList<>();
+    private static List<Lesson> items=new ArrayList<Lesson>();
     static {
     	Lesson o=null;
     	for(int i=0; i<10; i++){

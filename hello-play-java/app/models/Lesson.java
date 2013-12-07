@@ -3,6 +3,21 @@ package models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Persistence;
+
 //import java.util.*;
 //import javax.persistence.*;
 //
@@ -10,12 +25,16 @@ import java.util.List;
 //import play.data.format.*;
 //import play.data.validation.*;
 //
-//@Entity 
-
+@Entity 
 public class Lesson implements IDataRecord{
-
-	private List<StudentLesson> lessons=new ArrayList<>();
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
+
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@JoinColumn(name="lesson_id", referencedColumnName="id")
+	private List<StudentLesson> lessons=new ArrayList<StudentLesson>();
+	
+	@Column
 	private String name;
 	public Lesson() {
 	}
@@ -69,7 +88,47 @@ public class Lesson implements IDataRecord{
 		for(int i=0; i<lessons.size(); i++)
 			if(argv==lessons.get(i).getId())
 				return i;
+		
 		return -1;
+	}
+	
+	@Override
+	public String toString() {
+		final int maxLen = 10;
+		StringBuilder builder = new StringBuilder();
+		builder.append("Lesson [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (lessons != null) {
+			builder.append("lessons=");
+			builder.append(lessons.subList(0, Math.min(lessons.size(), maxLen)));
+			builder.append(", ");
+		}
+		if (name != null) {
+			builder.append("name=");
+			builder.append(name);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+	public static void main(String[] args) {
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+		EntityManager em = emf.createEntityManager();
+		EntityTransaction tx = em.getTransaction();
+		tx.begin();
+		for(int i=0; i<10; i++){
+			Lesson o = new Lesson("Lesson "+i);
+			System.out.println("Persist:"+o);
+			em.persist(o);
+			System.out.println("Persisted:"+o);
+		}
+		if(tx!=null && tx.isActive())
+			em.flush();
+		for(Lesson o:em.createQuery(" Select t from Lesson as t" , Lesson.class).getResultList())
+			System.out.println(o);
 	}
 
 }
