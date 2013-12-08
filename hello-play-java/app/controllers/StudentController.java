@@ -1,56 +1,62 @@
 package controllers;
 
-import java.util.ArrayList;
-import java.util.List;
+import models.Student;
+import play.libs.Json;
+import play.mvc.BodyParser;
+import play.mvc.Result;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-
-import play.libs.Json;
-import play.mvc.Controller;
-import play.mvc.Result;
-import play.mvc.With;
-import models.Student;
-import models.StudentLesson;
 
 public class StudentController extends AbstractRecordController<Student> {
 
-    private static Class<?> thisClass=StudentController.class;
-    private static List<Student> items=new ArrayList<Student>();
-    static {
-    	Student o=null;
-    	for(int i=0; i<10; i++){
-    		create();
-    		//items.add(o=new Student(i+1l, "Item "+i));
-//    		for(int j=0; j<10; j++){
-//    			o.add();
-//    		}
-    	}
-    	//play.db.jpa.JPA
+    //private static Class<?> thisClass=StudentController.class;
+    //private static List<Student> items=new ArrayList<Student>();
+    
+//    static {
+//    	Student o=null;
+//    	for(int i=0; i<10; i++){
+//
+//    		create();
+//    	}
+//    	//play.db.jpa.JPA
+//    }
+
+    protected StudentController() {
+		super(Student.class);
+	}
+    static StudentController _ME=null;
+    public static StudentController me(){
+    	if(_ME!=null)
+    		return _ME;
+    	_ME=new StudentController();
+    	return _ME;
     }
     public static Result index() {
-        //return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".index"));
-    	return play.mvc.Results.ok(Json.toJson(items));
+    	StudentController me = new StudentController();
+    	return play.mvc.Results.ok(Json.toJson(me.list()));
     }
     public static Result create() {
-    	long id = nexId(items);
-    	items.add(new Student(id, "Item "+id));
-    	return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".create"));
+    	JsonNode json=request().body().asJson();
+    	Student model = Json.fromJson(json, Student.class);
+    	StudentController me = new StudentController();
+    	return play.mvc.Results.ok(Json.toJson(me.createIt(model)));
     }
     public static Result read(Long id) {
-    	//return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".read("+id+")"));
-    	Student dr = find(id, items);
-    	
+
+    	StudentController me = me();
+    	Student dr = me.get(id);
     	return play.mvc.Results.ok(Json.toJson(dr));
     }
+    @BodyParser.Of(BodyParser.Json.class)
     public static Result update(Long id) {
-    	//return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".update("+id+")"));
-    	Student dr = find(id, items);
+    	JsonNode json=request().body().asJson();
+    	Student model = Json.fromJson(json, Student.class);
+    	StudentController me = me();
+    	Student dr = me.updateIt(model);
     	return play.mvc.Results.ok(Json.toJson(dr));
     }
     public static Result delete(Long id) {
-    	remove(id, items);
-    	//return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".delete("+id+")"));
+    	me().deleteIt(id);
     	return index();
     }
 

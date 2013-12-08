@@ -3,14 +3,22 @@ package controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
 import models.Lesson;
 import models.Student;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-public class LessonController extends Controller {
+public class LessonController extends AbstractRecordController<Lesson> {
 
-    private static Class<?> thisClass=LessonController.class;
+
+    protected LessonController() {
+		super(Lesson.class);
+	}
+	private static Class<?> thisClass=LessonController.class;
     
     private static List<Lesson> items=new ArrayList<Lesson>();
     static {
@@ -21,6 +29,13 @@ public class LessonController extends Controller {
 //    			o.add();
 //    		}
     	}
+    }
+    static LessonController _ME=null;
+    public static LessonController me(){
+    	if(_ME!=null)
+    		return _ME;
+    	_ME=new LessonController();
+    	return _ME;
     }
     
     public static Result index() {
