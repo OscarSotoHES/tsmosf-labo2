@@ -1,13 +1,13 @@
 HOST: https://schoolapi.apiary.io/
 
 # SchoolAPI
-School API is a *simple API* that allow to manage students and courses.
+School API is a *simple API* that allow to manage students and lessons.
 
 # Group Students
 Students related resources of the **School API**
 
 ## Students Collection [/students]
-### List all Students and courses where they are registred [GET]
+### List all Students and lessons where they are registred [GET]
 + Response 200 (application/json)
 
         [
@@ -33,7 +33,7 @@ Students related resources of the **School API**
         }
 
 ## Student [/students/{id}]
-A single Student object with all its courses and details
+A single Student object with all its lessons and details
 
 + Parameters
     + id (required, number, `3`) ... Numeric `id` of the Student to perform action with. Has example value.
@@ -43,7 +43,7 @@ A single Student object with all its courses and details
     + Body
 
             {
-                "id": 2, "firstName": "Paul", "lastName": "Wlker", "courses":
+                "id": 2, "firstName": "Paul", "lastName": "Wlker", "lessons":
                 [
                     {
                         "id": "1",
@@ -74,11 +74,11 @@ A single Student object with all its courses and details
 + Response 204
 
 
-# Group Courses
-Courses related resources of the **School API**
+# Group lessons
+lessons related resources of the **School API**
 
-## Courses Collection [/courses]
-### List all Courses where they are registred [GET]
+## lessons Collection [/lessons]
+### List all lessons where they are registred [GET]
 + Response 200 (application/json)
 
         [
@@ -90,7 +90,7 @@ Courses related resources of the **School API**
             }
         ]
 
-### Create a Course [POST]
+### Create a Lesson [POST]
 + Request (application/json)
 
         {
@@ -103,13 +103,13 @@ Courses related resources of the **School API**
             "id": 3, "Name": "Chemistry"
         }
 
-## Courses [/courses/{id}]
-A single Course object with all his registred students
+## lessons [/lessons/{id}]
+A single Lesson object with all his registred students
 
 + Parameters
-    + id (required, number, `1`) ... Numeric `id` of the Course to perform action with. Has example value.
+    + id (required, number, `1`) ... Numeric `id` of the Lesson to perform action with. Has example value.
 
-### Retrieve a Course [GET]
+### Retrieve a Lesson [GET]
 + Response 200 (application/json)
     + Body
 
@@ -129,7 +129,7 @@ A single Course object with all his registred students
                 ]
             }
 
-### Update a Course, used primarily to register students in the course [POST]
+### Update a Lesson, used primarily to register students in the Lesson [POST]
 + Request (application/json)
 
         {
@@ -159,5 +159,5 @@ A single Course object with all his registred students
         }
 
 
-### Remove a Course [DELETE]
+### Remove a Lesson [DELETE]
 + Response 204
