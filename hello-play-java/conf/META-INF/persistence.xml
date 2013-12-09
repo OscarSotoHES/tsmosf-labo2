@@ -32,7 +32,7 @@ create-drop: drop the schema at the end of the session.
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
 			<property name="javax.persistence.jdbc.user" value="adm_tsm" />
 			<property name="javax.persistence.jdbc.password" value="OSFMysql2" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://mysql:3306/db_tsm_osf_labo_2" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://thevoz.no-ip.org:3306/db_tsm_osf_labo_2" />
 
 			<property name="hibernate.max_fetch_depth" value="3" />
 			<property name="hibernate.show_sql" value="true" />
