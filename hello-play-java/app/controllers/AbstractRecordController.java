@@ -1,5 +1,6 @@
 package controllers;
 
+import java.io.Closeable;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -52,19 +53,30 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	public T updateIt(T argv){
 		EntityManager em = getEntityManager();
 		EntityTransaction tx = em.getTransaction();
-		tx.begin();
-		em.merge(argv);
-		tx.commit();
-		return argv;
+		try{
+			tx.begin();
+			em.merge(argv);
+			tx.commit();
+			return argv;
+		}catch(Exception ex){
+			tx.rollback();
+			throw ex;
+		}
+		
 	}
 
 	public T createIt(T argv){
 		EntityManager em = getEntityManager();
 		EntityTransaction tx = em.getTransaction();
-		tx.begin();
-		em.persist(argv);
-		tx.commit();
-		return argv;
+		try{
+			tx.begin();
+			em.persist(argv);
+			tx.commit();
+			return argv;
+		}catch(Exception ex){
+			tx.rollback();
+			throw ex;
+		}
 	}
 
 	public T saveIt(T argv){
@@ -76,10 +88,15 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	public T deleteIt(T argv){
 		EntityManager em = getEntityManager();
 		EntityTransaction tx = em.getTransaction();
-		tx.begin();
-		em.remove(argv);
-		tx.commit();
-		return argv;
+		try{
+			tx.begin();
+			em.remove(argv);
+			tx.commit();
+			return argv;
+		}catch(Exception ex){
+			tx.rollback();
+			throw ex;
+		}
 	}
 
 	public T deleteIt(Long argv){

@@ -54,8 +54,11 @@ public class StudentController extends AbstractRecordController<Student> {
     }
     @BodyParser.Of(BodyParser.Json.class)
     public static Result create() {
-    	JsonNode json=request().body().asJson();
-    	Student model = Json.fromJson(json, Student.class);
+    	Student model = null;
+    	if(model==null){
+	    	JsonNode json=request().body().asJson();
+	    	model = Json.fromJson(json, Student.class);
+    	}
     	StudentController me = me();
     	return play.mvc.Results.ok(Json.toJson(me.createIt(model)));
     }
@@ -67,8 +70,11 @@ public class StudentController extends AbstractRecordController<Student> {
     }
     @BodyParser.Of(BodyParser.Json.class)
     public static Result update(Long id) {
-    	JsonNode json=request().body().asJson();
-    	Student model = Json.fromJson(json, Student.class);
+    	Student model = null;
+    	if(model==null){
+	    	JsonNode json=request().body().asJson();
+	    	model = Json.fromJson(json, Student.class);
+    	}
     	StudentController me = me();
     	Student dr = me.updateIt(model);
     	return play.mvc.Results.ok(Json.toJson(dr));
