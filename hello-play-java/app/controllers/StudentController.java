@@ -52,6 +52,7 @@ public class StudentController extends AbstractRecordController<Student> {
     	StudentController me = me();
     	return play.mvc.Results.ok(Json.toJson(me.list()));
     }
+    @BodyParser.Of(BodyParser.Json.class)
     public static Result create() {
     	JsonNode json=request().body().asJson();
     	Student model = Json.fromJson(json, Student.class);
