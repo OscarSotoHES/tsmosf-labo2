@@ -58,9 +58,12 @@ public class LessonController extends AbstractRecordController<Lesson> {
     	return play.mvc.Results.ok(Json.toJson(me.list()));
     }
     @BodyParser.Of(BodyParser.Json.class)
-    public static Result create() {
-    	JsonNode json=request().body().asJson();
-    	Lesson model = Json.fromJson(json, Lesson.class);
+    public static Result create( ) {
+    	Lesson model=null;
+    	if(model==null){
+    		JsonNode json=request().body().asJson();
+    		model = Json.fromJson(json, Lesson.class);
+    	}
     	LessonController me = me();
     	return play.mvc.Results.ok(Json.toJson(me.createIt(model)));
     }
@@ -72,8 +75,11 @@ public class LessonController extends AbstractRecordController<Lesson> {
     }
     @BodyParser.Of(BodyParser.Json.class)
     public static Result update(Long id) {
-    	JsonNode json=request().body().asJson();
-    	Lesson model = Json.fromJson(json, Lesson.class);
+    	Lesson model=null;
+    	if(model==null){
+    		JsonNode json=request().body().asJson();
+    		model = Json.fromJson(json, Lesson.class);
+    	}
     	LessonController me = me();
     	Lesson dr = me.updateIt(model);
     	return play.mvc.Results.ok(Json.toJson(dr));

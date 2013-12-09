@@ -3,6 +3,8 @@ package controllers;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Table;
 import javax.persistence.TypedQuery;
 
@@ -48,11 +50,20 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	}
 
 	public T updateIt(T argv){
-		return getEntityManager().merge(argv);
+		EntityManager em = getEntityManager();
+		EntityTransaction tx = em.getTransaction();
+		tx.begin();
+		em.merge(argv);
+		tx.commit();
+		return argv;
 	}
 
 	public T createIt(T argv){
-		getEntityManager().persist(argv);
+		EntityManager em = getEntityManager();
+		EntityTransaction tx = em.getTransaction();
+		tx.begin();
+		em.persist(argv);
+		tx.commit();
 		return argv;
 	}
 
@@ -63,7 +74,11 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	}
 
 	public T deleteIt(T argv){
-		getEntityManager().remove(argv);
+		EntityManager em = getEntityManager();
+		EntityTransaction tx = em.getTransaction();
+		tx.begin();
+		em.remove(argv);
+		tx.commit();
 		return argv;
 	}
 
