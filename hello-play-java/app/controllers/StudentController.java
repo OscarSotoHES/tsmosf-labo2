@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class StudentController extends AbstractRecordController<Student> {
 
-    //private static Class<?> thisClass=StudentController.class;
+    private static Class<?> thisClass=StudentController.class;
     //private static List<Student> items=new ArrayList<Student>();
     
 //    static {
@@ -31,14 +31,31 @@ public class StudentController extends AbstractRecordController<Student> {
     	_ME=new StudentController();
     	return _ME;
     }
+    
+    public static Result indexHtml() {
+        return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".index"));
+    }
+    public static Result createHtml() {
+    	return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".create"));
+    }
+    public static Result readHtml(String id) {
+    	return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".read("+id+")"));
+    }
+    public static Result updateHtml(String id) {
+    	return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".update("+id+")"));
+    }
+    public static Result deleteHtml(String id) {
+    	return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".delete("+id+")"));
+    }
+    
     public static Result index() {
-    	StudentController me = new StudentController();
+    	StudentController me = me();
     	return play.mvc.Results.ok(Json.toJson(me.list()));
     }
     public static Result create() {
     	JsonNode json=request().body().asJson();
     	Student model = Json.fromJson(json, Student.class);
-    	StudentController me = new StudentController();
+    	StudentController me = me();
     	return play.mvc.Results.ok(Json.toJson(me.createIt(model)));
     }
     public static Result read(Long id) {

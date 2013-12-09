@@ -78,7 +78,10 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	}
 
 	public String entityName(){
-		return entityClass().getAnnotation(Entity.class).name();
+		String s=entityClass().getAnnotation(Entity.class).name();
+		if(s==null || s.isEmpty())
+			s=entityClass().getSimpleName();
+		return s;
 	}
 
 	public static <T extends IDataRecord> long nexId(List<T> items){

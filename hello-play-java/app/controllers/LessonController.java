@@ -3,13 +3,12 @@ package controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import models.Lesson;
 import models.Student;
-import play.mvc.Controller;
+import play.libs.Json;
+import play.mvc.BodyParser;
 import play.mvc.Result;
 
 public class LessonController extends AbstractRecordController<Lesson> {
@@ -38,21 +37,49 @@ public class LessonController extends AbstractRecordController<Lesson> {
     	return _ME;
     }
     
-    public static Result index() {
+    public static Result indexHtml() {
         return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".index"));
     }
-    public static Result create() {
+    public static Result createHtml() {
     	return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".create"));
     }
-    public static Result read(String id) {
+    public static Result readHtml(String id) {
     	return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".read("+id+")"));
     }
-    public static Result update(String id) {
+    public static Result updateHtml(String id) {
     	return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".update("+id+")"));
     }
-    public static Result delete(String id) {
+    public static Result deleteHtml(String id) {
     	return ok(views.html.index.render("Hello Play Framework from "+thisClass.getName()+".delete("+id+")"));
     }
     
+    public static Result index() {
+    	LessonController me = new LessonController();
+    	return play.mvc.Results.ok(Json.toJson(me.list()));
+    }
+    public static Result create() {
+    	JsonNode json=request().body().asJson();
+    	Lesson model = Json.fromJson(json, Lesson.class);
+    	LessonController me = me();
+    	return play.mvc.Results.ok(Json.toJson(me.createIt(model)));
+    }
+    public static Result read(Long id) {
+
+    	LessonController me = me();
+    	Lesson dr = me.get(id);
+    	return play.mvc.Results.ok(Json.toJson(dr));
+    }
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result update(Long id) {
+    	JsonNode json=request().body().asJson();
+    	Lesson model = Json.fromJson(json, Lesson.class);
+    	LessonController me = me();
+    	Lesson dr = me.updateIt(model);
+    	return play.mvc.Results.ok(Json.toJson(dr));
+    }
+    public static Result delete(Long id) {
+    	me().deleteIt(id);
+    	return index();
+    }
 
 }
