@@ -72,6 +72,7 @@ public class StudentController extends AbstractRecordController<Student> {
     				o.setStudentId(model.getId());
     		model=me.updateIt(model);
 		}
+		model=me.refresh(model);
     	return play.mvc.Results.created(Json.toJson(model));
     }
     public static Result read(Long id) {
@@ -98,6 +99,7 @@ public class StudentController extends AbstractRecordController<Student> {
     				o.setStudentId(model.getId());
     	StudentController me = me();
     	model= me.updateIt(model);
+    	model=me.refresh(model);
     	return play.mvc.Results.ok(Json.toJson(model));
     }
     public static Result delete(Long id) {

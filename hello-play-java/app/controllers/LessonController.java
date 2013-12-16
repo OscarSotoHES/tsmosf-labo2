@@ -3,13 +3,13 @@ package controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import models.Lesson;
-import models.Student;
+import models.StudentLesson;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class LessonController extends AbstractRecordController<Lesson> {
 
@@ -54,18 +54,28 @@ public class LessonController extends AbstractRecordController<Lesson> {
     }
     
     public static Result index() {
-    	LessonController me = new LessonController();
+    	LessonController me = me();
     	return play.mvc.Results.ok(Json.toJson(me.list()));
     }
     @BodyParser.Of(BodyParser.Json.class)
-    public static Result create( ) {
-    	Lesson model=null;
+    public static Result create() {
+    	Lesson model = null;
     	if(model==null){
-    		JsonNode json=request().body().asJson();
-    		model = Json.fromJson(json, Lesson.class);
+	    	JsonNode json=request().body().asJson();
+	    	model = Json.fromJson(json, Lesson.class);
     	}
+    	List<StudentLesson> l = model.getStudents();
     	LessonController me = me();
-    	return play.mvc.Results.ok(Json.toJson(me.createIt(model)));
+    	
+    	model=me.createIt(model);
+		if(l!=null && l.isEmpty()==false){
+    		for(StudentLesson o:l)
+    			if(o!=null)
+    				o.setLessonId(model.getId());
+    		model=me.updateIt(model);
+		}
+		model=me.refresh(model);
+    	return play.mvc.Results.created(Json.toJson(model));
     }
     public static Result read(Long id) {
 
@@ -73,23 +83,34 @@ public class LessonController extends AbstractRecordController<Lesson> {
     	Lesson dr = me.get(id);
     	if(dr==null)
     		play.mvc.Results.badRequest("Item not found :"+id);
+    	
     	return play.mvc.Results.ok(Json.toJson(dr));
     }
     @BodyParser.Of(BodyParser.Json.class)
     public static Result update(Long id) {
-    	Lesson model=null;
+    	Lesson model = null;
     	if(model==null){
-    		JsonNode json=request().body().asJson();
-    		model = Json.fromJson(json, Lesson.class);
+	    	JsonNode json=request().body().asJson();
+	    	model = Json.fromJson(json, Lesson.class);
     	}
     	model.setId(id);
+    	List<StudentLesson> l = model.getStudents();
+		if(l!=null)
+    		for(StudentLesson o:l)
+    			if(o!=null)
+    				o.setLessonId(model.getId());
     	LessonController me = me();
-    	Lesson dr = me.updateIt(model);
-    	return play.mvc.Results.ok(Json.toJson(dr));
+    	model= me.updateIt(model);
+    	model=me.refresh(model);
+    	return play.mvc.Results.ok(Json.toJson(model));
     }
     public static Result delete(Long id) {
-    	me().deleteIt(id);
-    	return index();
+    	try{
+    		me().deleteIt(id);
+    		return play.mvc.Results.ok("Deleted "+id);
+    	}catch(Exception ex){
+    		return play.mvc.Results.internalServerError(Json.toJson(ex));
+    	}
     }
 
 }
