@@ -87,7 +87,12 @@ public class Student implements IDataRecord {
 		}
 		return -1;
 	}
-	
+	public List<StudentLesson> getLessons() {
+		return lessons;
+	}
+	public void setLessons(List<StudentLesson> lessons) {
+		this.lessons = lessons;
+	}
 
 	@Override
 	public String toString() {

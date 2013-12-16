@@ -71,6 +71,8 @@ public class LessonController extends AbstractRecordController<Lesson> {
 
     	LessonController me = me();
     	Lesson dr = me.get(id);
+    	if(dr==null)
+    		play.mvc.Results.badRequest("Item not found :"+id);
     	return play.mvc.Results.ok(Json.toJson(dr));
     }
     @BodyParser.Of(BodyParser.Json.class)
@@ -80,6 +82,7 @@ public class LessonController extends AbstractRecordController<Lesson> {
     		JsonNode json=request().body().asJson();
     		model = Json.fromJson(json, Lesson.class);
     	}
+    	model.setId(id);
     	LessonController me = me();
     	Lesson dr = me.updateIt(model);
     	return play.mvc.Results.ok(Json.toJson(dr));

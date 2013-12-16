@@ -61,7 +61,12 @@ public class Lesson implements IDataRecord{
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+	public List<StudentLesson> getStudents() {
+		return students;
+	}
+	public void setStudents(List<StudentLesson> students) {
+		this.students = students;
+	}
 	public StudentLesson add(Student argv){
 		return addStudent(argv.getId());
 		
