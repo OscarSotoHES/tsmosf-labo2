@@ -69,9 +69,7 @@ public class LessonController extends AbstractRecordController<Lesson> {
     	
     	model=me.createIt(model);
 		if(l!=null && l.isEmpty()==false){
-    		for(StudentLesson o:l)
-    			if(o!=null)
-    				o.setLessonId(model.getId());
+    		updateRelation(l, model);
     		model=me.updateIt(model);
 		}
 		model=me.refresh(model);
@@ -96,9 +94,7 @@ public class LessonController extends AbstractRecordController<Lesson> {
     	model.setId(id);
     	List<StudentLesson> l = model.getStudents();
 		if(l!=null)
-    		for(StudentLesson o:l)
-    			if(o!=null)
-    				o.setLessonId(model.getId());
+			updateRelation(l, model);
     	LessonController me = me();
     	model= me.updateIt(model);
     	model=me.refresh(model);

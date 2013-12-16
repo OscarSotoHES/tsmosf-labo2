@@ -19,10 +19,15 @@ import javax.persistence.Persistence;
 
 @Entity
 public class Student implements IDataRecord {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 
-	@OneToMany(cascade={CascadeType.MERGE, CascadeType.PERSIST}, fetch=FetchType.LAZY)
+	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
 	@JoinColumn(name="student_id", referencedColumnName="id")
 	private List<StudentLesson> lessons=new ArrayList<StudentLesson>();
 

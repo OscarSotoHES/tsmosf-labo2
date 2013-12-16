@@ -1,6 +1,5 @@
 package controllers;
 
-import java.io.Closeable;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -10,6 +9,9 @@ import javax.persistence.Table;
 import javax.persistence.TypedQuery;
 
 import models.IDataRecord;
+import models.Lesson;
+import models.Student;
+import models.StudentLesson;
 
 public class AbstractRecordController<T extends IDataRecord> extends AbstractController {
 
@@ -55,7 +57,7 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 		EntityTransaction tx = em.getTransaction();
 		try{
 			tx.begin();
-			em.merge(argv);
+			argv=em.merge(argv);
 			tx.commit();
 			return argv;
 		}catch(Exception ex){
@@ -108,7 +110,11 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	}
 
 	public T refresh(T argv){
-		getEntityManager().refresh(argv);
+		EntityManager em = getEntityManager();
+		if(em.contains(argv))
+			em.refresh(argv);
+		else
+			argv=em.merge(argv);
 		return argv;
 	}
 
@@ -149,4 +155,22 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 				return r;
 		return null;
 	}
+	
+
+    protected static void updateRelation(Iterable<StudentLesson> l, Student model){
+    	if(l==null )
+    		return;
+		for(StudentLesson o:l)
+			if(o!=null)
+				o.setStudentId(model.getId());
+    }
+	
+
+    protected static void updateRelation(List<StudentLesson> l, Lesson model){
+    	if(l==null || l.isEmpty())
+    		return;
+		for(StudentLesson o:l)
+			if(o!=null)
+				o.setLessonId(model.getId());
+    }
 }
