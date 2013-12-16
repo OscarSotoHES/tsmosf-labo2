@@ -14,7 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Persistence;
 
@@ -30,9 +29,9 @@ public class Lesson implements IDataRecord{
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@OneToMany(cascade={CascadeType.MERGE, CascadeType.PERSIST}, fetch=FetchType.LAZY)
 	@JoinColumn(name="lesson_id", referencedColumnName="id")
-	private List<StudentLesson> lessons=new ArrayList<StudentLesson>();
+	private List<StudentLesson> students=new ArrayList<StudentLesson>();
 	
 	@Column
 	private String name;
@@ -72,22 +71,26 @@ public class Lesson implements IDataRecord{
 		if(o!=null)
 			return o;
 		o=new StudentLesson(this.getId(), argv);
-		lessons.add(o);
+		students.add(o);
 		return o;
 	}
 	public StudentLesson findStudent(long argv){
 		int i = indexOfStudent(argv);
 		if(i<0)
 			return null;
-		return lessons.get(i);
+		return students.get(i);
 	}
 	public int indexOfStudent(long argv){
-		if(lessons==null ||lessons.isEmpty())
+		if(students==null ||students.isEmpty())
 			return -1;
 		//Long v=Long.valueOf(argv);
-		for(int i=0; i<lessons.size(); i++)
-			if(argv==lessons.get(i).getId())
+		for(int i=0; i<students.size(); i++){
+			StudentLesson dr = students.get(i);
+			if(dr==null || dr.getId()==null)
+				continue;
+			if(argv==dr.getId())
 				return i;
+		}
 		
 		return -1;
 	}
@@ -102,9 +105,11 @@ public class Lesson implements IDataRecord{
 			builder.append(id);
 			builder.append(", ");
 		}
-		if (lessons != null) {
+		if (students != null) {
 			builder.append("lessons=");
-			builder.append(lessons.subList(0, Math.min(lessons.size(), maxLen)));
+			List<StudentLesson> l = students.subList(0, Math.min(students.size(), maxLen));
+			for(StudentLesson o:l)
+				builder.append(o).append(", ");
 			builder.append(", ");
 		}
 		if (name != null) {
@@ -122,6 +127,9 @@ public class Lesson implements IDataRecord{
 		for(int i=0; i<10; i++){
 			Lesson o = new Lesson("Lesson "+i);
 			System.out.println("Persist:"+o);
+			o.addStudent(1);
+			o.addStudent(2);
+			o.addStudent(3);
 			em.persist(o);
 			System.out.println("Persisted:"+o);
 		}

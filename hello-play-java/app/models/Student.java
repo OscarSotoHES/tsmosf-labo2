@@ -22,7 +22,7 @@ public class Student implements IDataRecord {
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@OneToMany(cascade={CascadeType.MERGE, CascadeType.PERSIST}, fetch=FetchType.LAZY)
 	@JoinColumn(name="student_id", referencedColumnName="id")
 	private List<StudentLesson> lessons=new ArrayList<StudentLesson>();
 
@@ -78,10 +78,13 @@ public class Student implements IDataRecord {
 	public int indexOfLesson(long argv){
 		if(lessons==null ||lessons.isEmpty())
 			return -1;
-		//Long v=Long.valueOf(argv);
-		for(int i=0; i<lessons.size(); i++)
-			if(argv==lessons.get(i).getId())
+		for(int i=0; i<lessons.size(); i++){
+			StudentLesson dr = lessons.get(i);
+			if(dr==null || dr.getId()==null)
+				continue;
+			if(argv==dr.getId())
 				return i;
+		}
 		return -1;
 	}
 	
@@ -116,6 +119,10 @@ public class Student implements IDataRecord {
 		for(int i=0; i<10; i++){
 			Student o = new Student("Student "+i);
 			System.out.println("Persist:"+o);
+			o.addLesson(1);
+			o.addLesson(2);
+			o.addLesson(3);
+			
 			em.persist(o);
 			System.out.println("Persisted:"+o);
 		}

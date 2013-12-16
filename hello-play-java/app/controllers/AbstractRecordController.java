@@ -59,7 +59,8 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 			tx.commit();
 			return argv;
 		}catch(Exception ex){
-			tx.rollback();
+			if(tx.isActive())
+				tx.rollback();
 			throw ex;
 		}
 		
@@ -74,7 +75,8 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 			tx.commit();
 			return argv;
 		}catch(Exception ex){
-			tx.rollback();
+			if(tx.isActive())
+				tx.rollback();
 			throw ex;
 		}
 	}
@@ -94,7 +96,8 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 			tx.commit();
 			return argv;
 		}catch(Exception ex){
-			tx.rollback();
+			if(tx.isActive())
+				tx.rollback();
 			throw ex;
 		}
 	}
