@@ -41,6 +41,7 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 		}
 		catch(Exception ex)
 		{
+			System.out.println(ex);
 			return null;
 		}
 	}
