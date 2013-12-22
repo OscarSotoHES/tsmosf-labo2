@@ -30,40 +30,14 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	}
 	
 	public List<T> list(){
-		try
-		{
-			return Cache.getOrElse(entityName(), new Callable<List<T>>() {
-			        @Override
-			        public List<T> call() throws Exception {
-			            return getEntityManager().createQuery(String.format("select t from %s as t ", entityName()) , entityClass()).getResultList();
-			        }
-			 }, 10000);
-		}
-		catch(Exception ex)
-		{
-			System.out.println("Exception in list(): " +  ex);
-			return null;
-		}
+		return getEntityManager().createQuery(String.format("select t from %s as t ", entityName()) , entityClass()).getResultList();
 	}
 
 	public List<T> list(String query, Object...args){
 		return createQuery(query, args).getResultList();
 	}
 	public T get(final Long id){
-		try
-		{
-			return Cache.getOrElse(entityName() + "_" + id, new Callable<T>() {
-				 @Override
-			        public T call() throws Exception {	
-					return getEntityManager().find(entityClass, id);
-			        }
-			}, 10000);
-		}
-		catch(Exception ex)
-		{
-			System.out.println("Exception in get(" + id + ")" + ex);
-			return null;
-		}
+		return getEntityManager().find(entityClass, id);
 	}
 
 	public T get(String query, Object...args){
@@ -88,7 +62,6 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 			tx.begin();
 			argv=em.merge(argv);
 			tx.commit();
-			refreshCache(argv);
 			return argv;
 		}catch(Exception ex){
 			if(tx.isActive())
@@ -98,22 +71,6 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 		
 	}
 	
-	private void refreshCache(T argv) {
-		String entityName = entityName();
-		Cache.remove(entityName);
-		Cache.set(entityName + "_" + argv.getId(), argv);
-	}
-	
-	private void removeFromCache(T argv){
-		removeFromCache(argv.getId());
-	}
-
-	private void removeFromCache(Long id){
-	        String entityName = entityName();
-                Cache.remove(entityName);
-                Cache.remove(entityName + "_" + id);
-	}
-
 	public T createIt(T argv){
 		EntityManager em = getEntityManager();
 		EntityTransaction tx = em.getTransaction();
@@ -121,7 +78,6 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 			tx.begin();
 			em.persist(argv);
 			tx.commit();
-			refreshCache(argv);
 			return argv;
 		}catch(Exception ex){
 			if(tx.isActive())
@@ -139,7 +95,6 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	public T deleteIt(T argv){
 		EntityManager em = getEntityManager();
 		EntityTransaction tx = em.getTransaction();
-		removeFromCache(argv);
 		try{
 			tx.begin();
 			em.remove(argv);
@@ -153,7 +108,6 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	}
 
 	public T deleteIt(Long argv){
-		removeFromCache(argv);
 		return deleteIt(get(argv));
 	}
 
