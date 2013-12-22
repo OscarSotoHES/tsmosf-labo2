@@ -13,6 +13,8 @@ import models.Lesson;
 import models.Student;
 import models.StudentLesson;
 
+import play.cache.Cache;
+
 public class AbstractRecordController<T extends IDataRecord> extends AbstractController {
 
 	private Class<T> entityClass;
@@ -27,7 +29,12 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	}
 	
 	public List<T> list(){
-		return getEntityManager().createQuery(String.format("select t from %s as t ", entityName()) , entityClass()).getResultList();
+		return Cache.getOrElse(tableName(), new Callable<User>() {
+		        @Override
+		        public List<T> call() throws Exception {
+		            return getEntityManager().createQuery(String.format("select t from %s as t ", entityName()) , entityClass()).getResultList();
+		        }
+		 }, 10000);
 	}
 
 	public List<T> list(String query, Object...args){
