@@ -50,7 +50,20 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 		return createQuery(query, args).getResultList();
 	}
 	public T get(Long id){
-		return getEntityManager().find(entityClass, id);
+		try
+		{
+			return Cache.getOrElse(entityName() + "_" + id, new Callable<T>() {
+				 @Override
+			        public List<T> call() throws Exception {	
+					return getEntityManager().find(entityClass, id);
+			        }
+			}, 10000);
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Exception in get(" + id + ")" + ex);
+			return null;
+		}
 	}
 
 	public T get(String query, Object...args){
