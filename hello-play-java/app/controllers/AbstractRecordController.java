@@ -138,13 +138,16 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 			tx.begin();
 			em.remove(argv);
 			tx.commit();
+			refreshCache();
 			return argv;
 		}catch(Exception ex){
 			if(tx.isActive())
 				tx.rollback();
+			
+			refreshCache();
 			throw ex;
 		}
-		refreshCache();
+
 	}
 
 	public T deleteIt(Long argv){
