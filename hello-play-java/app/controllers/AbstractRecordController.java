@@ -32,7 +32,7 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	public List<T> list(){
 		try
 		{
-			return Cache.getOrElse(tableName(), new Callable<List<T>>() {
+			return Cache.getOrElse(entityName(), new Callable<List<T>>() {
 			        @Override
 			        public List<T> call() throws Exception {
 			            return getEntityManager().createQuery(String.format("select t from %s as t ", entityName()) , entityClass()).getResultList();
