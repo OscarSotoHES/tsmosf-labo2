@@ -54,7 +54,7 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 		{
 			return Cache.getOrElse(entityName() + "_" + id, new Callable<T>() {
 				 @Override
-			        public List<T> call() throws Exception {	
+			        public T call() throws Exception {	
 					return getEntityManager().find(entityClass, id);
 			        }
 			}, 10000);
