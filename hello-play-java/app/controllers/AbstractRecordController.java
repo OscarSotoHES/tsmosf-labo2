@@ -88,6 +88,7 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 			tx.begin();
 			argv=em.merge(argv);
 			tx.commit();
+			refreshCache(argv);
 			return argv;
 		}catch(Exception ex){
 			if(tx.isActive())
@@ -95,6 +96,18 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 			throw ex;
 		}
 		
+	}
+	
+	private void refreshCache(T argv) {
+		String entityName = entityName();
+		Cache.remove(entityName);
+		Cache.set(entityName + "_" + argv.getId(), argv);
+	}
+	
+	private void removeFromCache(T argv){
+		String entityName = entityName();
+		Cache.remove(entityName);
+		Cache.remove(entityName + "_" + argv.getId());
 	}
 
 	public T createIt(T argv){
@@ -104,6 +117,7 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 			tx.begin();
 			em.persist(argv);
 			tx.commit();
+			refreshCache(argv);
 			return argv;
 		}catch(Exception ex){
 			if(tx.isActive())
