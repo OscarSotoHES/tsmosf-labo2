@@ -41,7 +41,7 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 		}
 		catch(Exception ex)
 		{
-			System.out.println(ex);
+			System.out.println("Exception in list(): " +  ex);
 			return null;
 		}
 	}
