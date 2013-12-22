@@ -21,34 +21,25 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	private Class<T> entityClass;
 	protected AbstractRecordController(Class<T> entityClass){
 		this.entityClass=entityClass;
+		refreshCache();
 	}
+	
 	public Class<T> entityClass(){
 		return entityClass;
 	}
+	
 	public String tableName(){
 		return entityClass().getAnnotation(Table.class).name();
 	}
 	
 	public List<T> list(){
-		try
-		{
-			return Cache.getOrElse(entityName(), new Callable<List<T>>() {
-			        @Override
-			        public List<T> call() throws Exception {
-			            return getEntityManager().createQuery(String.format("select t from %s as t ", entityName()) , entityClass()).getResultList();
-			        }
-			 }, 10000);
-		}
-		catch(Exception ex)
-		{
-			System.out.println("Exception in list(): " +  ex);
-			return null;
-		}
+		return (List<T>) Cache.get(entityName());
 	}
 
 	public List<T> list(String query, Object...args){
 		return createQuery(query, args).getResultList();
 	}
+	
 	public T get(final Long id){
 		try
 		{
@@ -95,13 +86,16 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 				tx.rollback();
 			throw ex;
 		}
-		
+	}
+	
+	private void refreshCache() {
+		Cache.set(entityName(), getEntityManager().createQuery(String.format("select t from %s as t ",
+			entityName()) , entityClass()).getResultList());
 	}
 	
 	private void refreshCache(T argv) {
-		String entityName = entityName();
-		Cache.remove(entityName);
-		Cache.set(entityName + "_" + argv.getId(), argv);
+		refreshCache();
+		Cache.set(entityName() + "_" + argv.getId(), argv);
 	}
 	
 	private void removeFromCache(T argv){
@@ -137,9 +131,9 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	}
 
 	public T deleteIt(T argv){
+		removeFromCache(argv);
 		EntityManager em = getEntityManager();
 		EntityTransaction tx = em.getTransaction();
-		removeFromCache(argv);
 		try{
 			tx.begin();
 			em.remove(argv);
@@ -150,6 +144,7 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 				tx.rollback();
 			throw ex;
 		}
+		refreshCache();
 	}
 
 	public T deleteIt(Long argv){
