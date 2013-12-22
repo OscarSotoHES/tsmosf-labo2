@@ -49,7 +49,7 @@ public class AbstractRecordController<T extends IDataRecord> extends AbstractCon
 	public List<T> list(String query, Object...args){
 		return createQuery(query, args).getResultList();
 	}
-	public T get(Long id){
+	public T get(final Long id){
 		try
 		{
 			return Cache.getOrElse(entityName() + "_" + id, new Callable<T>() {
