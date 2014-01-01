@@ -22,8 +22,8 @@ libraryDependencies ++= Seq(
 
 
 resolvers ++= Seq(
-	// "Local Maven Repository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository"
-    "Local Maven Repository" at "file:///e:/_shared/_repository/maven/3.x.x",
+	"Local Maven Repository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository",
+    //"Local Maven Repository" at "file:///e:/_shared/_repository/maven/3.x.x",
     "Spy Repository" at "http://files.couchbase.com/maven2"
 )
 

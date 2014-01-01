@@ -19,16 +19,16 @@ public class LessonController extends AbstractRecordController<Lesson> {
 	}
 	private static Class<?> thisClass=LessonController.class;
     
-    private static List<Lesson> items=new ArrayList<Lesson>();
-    static {
-    	Lesson o=null;
-    	for(int i=0; i<10; i++){
-    		items.add(o=new Lesson(i+1l, "Item "+i));
+//    private static List<Lesson> items=new ArrayList<Lesson>();
+//    static {
+//    	Lesson o=null;
+//    	for(int i=0; i<10; i++){
+//    		items.add(o=new Lesson(i+1l, "Item "+i));
 //    		for(int j=0; j<10; j++){
 //    			o.add();
 //    		}
-    	}
-    }
+//    	}
+//    }
     static LessonController _ME=null;
     public static LessonController me(){
     	if(_ME!=null)
