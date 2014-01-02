@@ -14,7 +14,7 @@ public abstract class AbstractController extends Controller {
 	public EntityManagerFactory createEntityManagerFactory(){
 		return Persistence.createEntityManagerFactory("defaultPersistenceUnit");
 	}
-	public EntityManagerFactory getEntityManagerFactory(){
+	public synchronized EntityManagerFactory getEntityManagerFactory(){
 		if(emf!=null)
 			return emf;
 		emf=createEntityManagerFactory();
@@ -23,7 +23,7 @@ public abstract class AbstractController extends Controller {
 	public EntityManager createEntityManager(){
 		return getEntityManagerFactory().createEntityManager();
 	}
-	public EntityManager getEntityManager(){
+	public synchronized EntityManager getEntityManager(){
 		if(em!=null)
 			return em;
 		em=createEntityManager();
