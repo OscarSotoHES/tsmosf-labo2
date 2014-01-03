@@ -252,8 +252,8 @@ public class AbstractRecordWithCacheController<T extends IDataRecord> extends
 				o.setStudentId(model.getId());
 	}
 
-	protected static void updateRelation(List<StudentLesson> l, Lesson model) {
-		if (l == null || l.isEmpty())
+	protected static void updateRelation(Iterable<StudentLesson> l, Lesson model) {
+		if (l == null)
 			return;
 		for (StudentLesson o : l)
 			if (o != null)

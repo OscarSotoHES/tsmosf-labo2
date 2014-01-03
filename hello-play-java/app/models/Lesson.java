@@ -1,7 +1,9 @@
 package models;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -19,88 +21,117 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Persistence;
 
-
-@Entity@Access(AccessType.FIELD)
-public class Lesson implements IDataRecord{
+@Entity
+@Access(AccessType.FIELD)
+public class Lesson implements IDataRecord {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, orphanRemoval=true)
-	@JoinColumn(name="lesson_id", referencedColumnName="id")
-	private List<StudentLesson> students=new ArrayList<StudentLesson>();
-	
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, orphanRemoval = true)
+	@JoinColumn(name = "lesson_id", referencedColumnName = "id")
+	private Collection<StudentLesson> students = new HashSet<StudentLesson>();
+
 	@Column
 	private String name;
+
 	public Lesson() {
 	}
+
 	public Lesson(String name) {
 		this(null, name);
 	}
 
-	
 	public Lesson(Long id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
 	}
+
 	@Override
 	public Long getId() {
 		return id;
 	}
+
 	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	public List<StudentLesson> getStudents() {
+
+	public Collection<StudentLesson> getStudents() {
 		return students;
 	}
-	public void setStudents(List<StudentLesson> students) {
+
+	public void setStudents(Collection<StudentLesson> students) {
 		this.students = students;
 	}
-	public StudentLesson add(Student argv){
+
+	public StudentLesson add(Student argv) {
 		return addStudent(argv.getId());
-		
+
 	}
-	public StudentLesson addStudent(long argv){
+
+	public StudentLesson addStudent(long argv) {
 		StudentLesson o = findStudent(argv);
-		if(o!=null)
+		if (o != null)
 			return o;
-		o=new StudentLesson(this.getId(), argv);
+		o = new StudentLesson(this.getId(), argv);
 		students.add(o);
 		return o;
 	}
-	public StudentLesson findStudent(long argv){
-		int i = indexOfStudent(argv);
-		if(i<0)
+
+	public StudentLesson findStudent(long argv) {
+//		int i = indexOfStudent(argv);
+//		if (i < 0)
+//			return null;
+//		return students.get(i);
+		if (students == null || students.isEmpty())
 			return null;
-		return students.get(i);
-	}
-	public int indexOfStudent(long argv){
-		if(students==null ||students.isEmpty())
-			return -1;
-		//Long v=Long.valueOf(argv);
-		for(int i=0; i<students.size(); i++){
-			StudentLesson dr = students.get(i);
-			if(dr==null || dr.getId()==null)
+		// Long v=Long.valueOf(argv);
+		for (StudentLesson dr : students) {
+			if (dr == null || dr.getId() == null)
 				continue;
-			if(argv==dr.getId())
-				return i;
+			if (argv == dr.getId())
+				return dr;
 		}
-		
-		return -1;
+
+		return null;
 	}
-	
+
+	// public StudentLesson findStudent(long argv){
+	// int i = indexOfStudent(argv);
+	// if(i<0)
+	// return null;
+	// return students.get(i);
+	// }
+	// public int indexOfStudent(long argv){
+	// if(students==null ||students.isEmpty())
+	// return -1;
+	// //Long v=Long.valueOf(argv);
+	// for(int i=0; i<students.size(); i++){
+	// StudentLesson dr = students.get(i);
+	// if(dr==null || dr.getId()==null)
+	// continue;
+	// if(argv==dr.getId())
+	// return i;
+	// }
+	//
+	// return -1;
+	// }
+	//
 	@Override
 	public String toString() {
 		final int maxLen = 10;
@@ -113,9 +144,11 @@ public class Lesson implements IDataRecord{
 		}
 		if (students != null) {
 			builder.append("lessons=");
-			List<StudentLesson> l = students.subList(0, Math.min(students.size(), maxLen));
-			for(StudentLesson o:l)
-				builder.append(o).append(", ");
+			// List<StudentLesson> l = students.subList(0,
+			// Math.min(students.size(), maxLen));
+			// for(StudentLesson o:l)
+			// builder.append(o).append(", ");
+			builder.append(students.size());
 			builder.append(", ");
 		}
 		if (name != null) {
@@ -125,23 +158,26 @@ public class Lesson implements IDataRecord{
 		builder.append("]");
 		return builder.toString();
 	}
+
 	public static void main(String[] args) {
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("defaultPersistenceUnit");
 		EntityManager em = emf.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		tx.begin();
-		for(int i=0; i<10; i++){
-			Lesson o = new Lesson("Lesson "+i);
-			System.out.println("Persist:"+o);
+		for (int i = 0; i < 10; i++) {
+			Lesson o = new Lesson("Lesson " + i);
+			System.out.println("Persist:" + o);
 			o.addStudent(1);
 			o.addStudent(2);
 			o.addStudent(3);
 			em.persist(o);
-			System.out.println("Persisted:"+o);
+			System.out.println("Persisted:" + o);
 		}
-		if(tx!=null && tx.isActive())
+		if (tx != null && tx.isActive())
 			em.flush();
-		for(Lesson o:em.createQuery(" Select t from Lesson as t" , Lesson.class).getResultList())
+		for (Lesson o : em.createQuery(" Select t from Lesson as t",
+				Lesson.class).getResultList())
 			System.out.println(o);
 	}
 

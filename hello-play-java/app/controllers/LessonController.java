@@ -89,11 +89,11 @@ public class LessonController extends AbstractRecordController<Lesson> {
 				JsonNode json = request().body().asJson();
 				model = Json.fromJson(json, Lesson.class);
 			}
-			List<StudentLesson> l = model.getStudents();
+			Iterable<StudentLesson> l = model.getStudents();
 			LessonController me = me();
 
 			model = me.createIt(model);
-			if (l != null && l.isEmpty() == false) {
+			if (l != null ) {
 				updateRelation(l, model);
 				model = me.updateIt(model);
 			}
@@ -128,7 +128,7 @@ public class LessonController extends AbstractRecordController<Lesson> {
 				model = Json.fromJson(json, Lesson.class);
 			}
 			model.setId(id);
-			List<StudentLesson> l = model.getStudents();
+			Iterable<StudentLesson> l = model.getStudents();
 			if (l != null)
 				updateRelation(l, model);
 			LessonController me = me();
