@@ -30,8 +30,6 @@ public class StudentController extends AbstractRecordController<Student> {
 		super(Student.class);
 	}
 
-
-
 	private static Object locker = new Object();
 	static StudentController _ME = null;
 
@@ -70,58 +68,78 @@ public class StudentController extends AbstractRecordController<Student> {
 	}
 
 	public static Result index() {
-		StudentController me = me();
-		List<Student> l = me.list();
-		if (l == null || l.isEmpty())
-			return play.mvc.Results.noContent();
-		return play.mvc.Results.ok(Json.toJson(l));
+		try {
+			StudentController me = me();
+			List<Student> l = me.list();
+			if (l == null || l.isEmpty())
+				return play.mvc.Results.noContent();
+			return play.mvc.Results.ok(Json.toJson(l));
+		} catch (Exception ex) {
+			return play.mvc.Results.internalServerError(Json.toJson(ex));
+		}
+
 	}
 
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result create() {
-		Student model = null;
-		if (model == null) {
-			JsonNode json = request().body().asJson();
-			model = Json.fromJson(json, Student.class);
-		}
-		List<StudentLesson> l = model.getLessons();
-		StudentController me = me();
+		try {
+			Student model = null;
+			if (model == null) {
+				JsonNode json = request().body().asJson();
+				model = Json.fromJson(json, Student.class);
+			}
+			List<StudentLesson> l = model.getLessons();
+			StudentController me = me();
 
-		model = me.createIt(model);
-		if (l != null && l.isEmpty() == false) {
-			updateRelation(l, model);
-			model = me.updateIt(model);
+			model = me.createIt(model);
+			if (l != null && l.isEmpty() == false) {
+				updateRelation(l, model);
+				model = me.updateIt(model);
+			}
+			model = me.refresh(model);
+			return play.mvc.Results.created(Json.toJson(model));
+		} catch (Exception ex) {
+			return play.mvc.Results.internalServerError(Json.toJson(ex));
 		}
-		model = me.refresh(model);
-		return play.mvc.Results.created(Json.toJson(model));
+
 	}
 
 	public static Result read(Long id) {
 
-		StudentController me = me();
-		Student dr = me.get(id);
-		if (dr == null)
-			return play.mvc.Results.badRequest("Item not found :" + id);
+		try {
+			StudentController me = me();
+			Student dr = me.get(id);
+			if (dr == null)
+				return play.mvc.Results.badRequest("Item not found :" + id);
 
-		return play.mvc.Results.ok(Json.toJson(dr));
+			return play.mvc.Results.ok(Json.toJson(dr));
+		} catch (Exception ex) {
+			return play.mvc.Results.internalServerError(Json.toJson(ex));
+		}
+
 	}
 
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result update(Long id) {
-		Student model = null;
-		if (model == null) {
-			JsonNode json = request().body().asJson();
-			model = Json.fromJson(json, Student.class);
-		}
-		model.setId(id);
-		List<StudentLesson> l = model.getLessons();
-		if (l != null)
-			updateRelation(l, model);
-		StudentController me = me();
-		model = me.updateIt(model);
+		try {
+			Student model = null;
+			if (model == null) {
+				JsonNode json = request().body().asJson();
+				model = Json.fromJson(json, Student.class);
+			}
+			model.setId(id);
+			List<StudentLesson> l = model.getLessons();
+			if (l != null)
+				updateRelation(l, model);
+			StudentController me = me();
+			model = me.updateIt(model);
 
-		model = me.refresh(model);
-		return play.mvc.Results.ok(Json.toJson(model));
+			model = me.refresh(model);
+			return play.mvc.Results.ok(Json.toJson(model));
+		} catch (Exception ex) {
+			return play.mvc.Results.internalServerError(Json.toJson(ex));
+		}
+
 	}
 
 	public static Result delete(Long id) {

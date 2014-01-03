@@ -1,5 +1,7 @@
 package models;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -10,7 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Persistence;
 
-@Entity
+@Entity@Access(AccessType.FIELD)
 public class StudentLesson implements IDataRecord {
 	/**
 	 * 

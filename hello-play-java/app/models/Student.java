@@ -3,6 +3,8 @@ package models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Persistence;
 
-@Entity
+@Entity@Access(AccessType.FIELD)
 public class Student implements IDataRecord {
 	/**
 	 * 
@@ -27,7 +29,7 @@ public class Student implements IDataRecord {
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 
-	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, orphanRemoval=true)
 	@JoinColumn(name="student_id", referencedColumnName="id")
 	private List<StudentLesson> lessons=new ArrayList<StudentLesson>();
 

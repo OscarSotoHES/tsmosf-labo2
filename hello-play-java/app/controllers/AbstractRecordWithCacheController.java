@@ -39,12 +39,13 @@ public class AbstractRecordWithCacheController<T extends IDataRecord> extends
 			Callable<List<T>> call = new Callable<List<T>>() {
 				@Override
 				public List<T> call() throws Exception {
-					return new ArrayList<T>(list(String.format("select t from %s as t ",entityName())));
+					return list(String.format("select t from %s as t ",
+							entityName()));
 				}
 			};
 			r = Cache.getOrElse(entityName(), call, 10000);
-			if(r==null || r.isEmpty())
-				r=call.call();
+			if (r == null || r.isEmpty())
+				r = call.call();
 			return r;
 		} catch (Exception ex) {
 			System.out.println("Exception in list(): " + ex);
@@ -53,7 +54,14 @@ public class AbstractRecordWithCacheController<T extends IDataRecord> extends
 	}
 
 	public List<T> list(String query, Object... args) {
-		return createQuery(query, args).getResultList();
+
+		List<T> r = new ArrayList<T>();
+		List<T> l = createQuery(query, args).getResultList();
+		if (l == null || l.isEmpty())
+			return r;
+		for (T o : l)
+			r.add(o);
+		return r;
 	}
 
 	public T get(final Long id) {
@@ -90,15 +98,17 @@ public class AbstractRecordWithCacheController<T extends IDataRecord> extends
 		EntityManager em = getEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
-			tx.begin();
+			if (tx != null && tx.isActive() == false)
+				tx.begin();
 			argv = em.merge(argv);
 			cleanRelations(em);
-			tx.commit();
-			
+			if (tx != null && tx.isActive() == true)
+				tx.commit();
+
 			refreshCache(argv);
 			return argv;
 		} catch (Exception ex) {
-			if (tx.isActive())
+			if (tx != null && tx.isActive() == true)
 				tx.rollback();
 			throw ex;
 		}
@@ -125,13 +135,15 @@ public class AbstractRecordWithCacheController<T extends IDataRecord> extends
 		EntityManager em = getEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
-			tx.begin();
+			if (tx != null && tx.isActive() == false)
+				tx.begin();
 			em.persist(argv);
-			tx.commit();
+			if (tx != null && tx.isActive() == true)
+				tx.commit();
 			refreshCache(argv);
 			return argv;
 		} catch (Exception ex) {
-			if (tx.isActive())
+			if (tx != null && tx.isActive() == true)
 				tx.rollback();
 			throw ex;
 		}
@@ -148,13 +160,15 @@ public class AbstractRecordWithCacheController<T extends IDataRecord> extends
 		EntityTransaction tx = em.getTransaction();
 		removeFromCache(argv);
 		try {
-			tx.begin();
+			if (tx != null && tx.isActive() == false)
+				tx.begin();
 			em.remove(argv);
 			cleanRelations(em);
-			tx.commit();
+			if (tx!=null && tx.isActive()==true)
+				tx.commit();
 			return argv;
 		} catch (Exception ex) {
-			if (tx.isActive())
+			if (tx!=null && tx.isActive()==true)
 				tx.rollback();
 			throw ex;
 		}
@@ -173,16 +187,18 @@ public class AbstractRecordWithCacheController<T extends IDataRecord> extends
 			argv = em.merge(argv);
 		return argv;
 	}
-	
+
 	private void cleanRelations(EntityManager em) {
-		em.createQuery(String.format("delete from %s where studentId is null or lessonId is null", getEntityName(StudentLesson.class))).executeUpdate();
+		em.createQuery(
+				String.format(
+						"delete from %s where studentId is null or lessonId is null",
+						getEntityName(StudentLesson.class))).executeUpdate();
 	}
 
-
-	public static <C> String getEntityName(Class<C> clazz){
-		String s=clazz.getAnnotation(Entity.class).name();
-		if(s==null || s.isEmpty())
-			s=clazz.getSimpleName();
+	public static <C> String getEntityName(Class<C> clazz) {
+		String s = clazz.getAnnotation(Entity.class).name();
+		if (s == null || s.isEmpty())
+			s = clazz.getSimpleName();
 		return s;
 	}
 

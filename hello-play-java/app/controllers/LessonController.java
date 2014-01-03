@@ -69,57 +69,75 @@ public class LessonController extends AbstractRecordController<Lesson> {
 	}
 
 	public static Result index() {
-		LessonController me = me();
-		List<Lesson> l = me.list();
-		if (l == null || l.isEmpty())
-			return play.mvc.Results.noContent();
-		return play.mvc.Results.ok(Json.toJson(l));
+		try {
+			LessonController me = me();
+			List<Lesson> l = me.list();
+			if (l == null || l.isEmpty())
+				return play.mvc.Results.noContent();
+			return play.mvc.Results.ok(Json.toJson(l));
+		} catch (Exception ex) {
+			return play.mvc.Results.internalServerError(Json.toJson(ex));
+		}
+
 	}
 
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result create() {
-		Lesson model = null;
-		if (model == null) {
-			JsonNode json = request().body().asJson();
-			model = Json.fromJson(json, Lesson.class);
-		}
-		List<StudentLesson> l = model.getStudents();
-		LessonController me = me();
+		try {
+			Lesson model = null;
+			if (model == null) {
+				JsonNode json = request().body().asJson();
+				model = Json.fromJson(json, Lesson.class);
+			}
+			List<StudentLesson> l = model.getStudents();
+			LessonController me = me();
 
-		model = me.createIt(model);
-		if (l != null && l.isEmpty() == false) {
-			updateRelation(l, model);
-			model = me.updateIt(model);
+			model = me.createIt(model);
+			if (l != null && l.isEmpty() == false) {
+				updateRelation(l, model);
+				model = me.updateIt(model);
+			}
+			model = me.refresh(model);
+			return play.mvc.Results.created(Json.toJson(model));
+		} catch (Exception ex) {
+			return play.mvc.Results.internalServerError(Json.toJson(ex));
 		}
-		model = me.refresh(model);
-		return play.mvc.Results.created(Json.toJson(model));
+
 	}
 
 	public static Result read(Long id) {
+		try {
+			LessonController me = me();
+			Lesson dr = me.get(id);
+			if (dr == null)
+				return play.mvc.Results.badRequest("Item not found :" + id);
 
-		LessonController me = me();
-		Lesson dr = me.get(id);
-		if (dr == null)
-			return play.mvc.Results.badRequest("Item not found :" + id);
+			return play.mvc.Results.ok(Json.toJson(dr));
+		} catch (Exception ex) {
+			return play.mvc.Results.internalServerError(Json.toJson(ex));
+		}
 
-		return play.mvc.Results.ok(Json.toJson(dr));
 	}
 
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result update(Long id) {
-		Lesson model = null;
-		if (model == null) {
-			JsonNode json = request().body().asJson();
-			model = Json.fromJson(json, Lesson.class);
+		try {
+			Lesson model = null;
+			if (model == null) {
+				JsonNode json = request().body().asJson();
+				model = Json.fromJson(json, Lesson.class);
+			}
+			model.setId(id);
+			List<StudentLesson> l = model.getStudents();
+			if (l != null)
+				updateRelation(l, model);
+			LessonController me = me();
+			model = me.updateIt(model);
+			model = me.refresh(model);
+			return play.mvc.Results.ok(Json.toJson(model));
+		} catch (Exception ex) {
+			return play.mvc.Results.internalServerError(Json.toJson(ex));
 		}
-		model.setId(id);
-		List<StudentLesson> l = model.getStudents();
-		if (l != null)
-			updateRelation(l, model);
-		LessonController me = me();
-		model = me.updateIt(model);
-		model = me.refresh(model);
-		return play.mvc.Results.ok(Json.toJson(model));
 	}
 
 	public static Result delete(Long id) {
