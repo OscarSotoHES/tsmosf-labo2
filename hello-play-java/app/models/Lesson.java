@@ -16,7 +16,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Persistence;
 
@@ -34,7 +33,7 @@ public class Lesson implements IDataRecord {
 
 	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
 	@JoinColumn(name = "lesson_id", referencedColumnName = "id")
-	private List<StudentLesson> students = new ArrayList<StudentLesson>();
+	private List<LessonStudent> students = new ArrayList<LessonStudent>();
 
 	@Column
 	private String name;
@@ -70,32 +69,32 @@ public class Lesson implements IDataRecord {
 		this.name = name;
 	}
 
-	public List<StudentLesson> getStudents() {
+	public List<LessonStudent> getStudents() {
 		return students;
 	}
 
-	public void setStudents(List<StudentLesson> students) {
+	public void setStudents(List<LessonStudent> students) {
 		this.students = students;
 	}
 
-	public StudentLesson add(Student argv) {
+	public LessonStudent add(Student argv) {
 		return addStudent(argv.getId());
 
 	}
 
-	public StudentLesson addStudent(long argv) {
-		StudentLesson o = findStudent(argv);
+	public LessonStudent addStudent(long argv) {
+		LessonStudent o = findStudent(argv);
 		if (o != null)
 			return o;
-		o = new StudentLesson(this.getId(), argv);
+		o = new LessonStudent(this.getId(), argv);
 		students.add(o);
 		return o;
 	}
 
-	public StudentLesson findStudent(long argv) {
+	public LessonStudent findStudent(long argv) {
 		if (students == null || students.isEmpty())
 			return null;
-		for (StudentLesson dr : students) {
+		for (LessonStudent dr : students) {
 			if (dr == null || dr.getId() == null)
 				continue;
 			if (argv == dr.getId())
@@ -110,7 +109,7 @@ public class Lesson implements IDataRecord {
 	// return -1;
 	// //Long v=Long.valueOf(argv);
 	// for(int i=0; i<students.size(); i++){
-	// StudentLesson dr = students.get(i);
+	// LessonStudent dr = students.get(i);
 	// if(dr==null || dr.getId()==null)
 	// continue;
 	// if(argv==dr.getId())
@@ -132,9 +131,9 @@ public class Lesson implements IDataRecord {
 		}
 		if (students != null) {
 			builder.append("lessons=");
-			// List<StudentLesson> l = students.subList(0,
+			// List<LessonStudent> l = students.subList(0,
 			// Math.min(students.size(), maxLen));
-			// for(StudentLesson o:l)
+			// for(LessonStudent o:l)
 			// builder.append(o).append(", ");
 			builder.append(students.size());
 			builder.append(", ");

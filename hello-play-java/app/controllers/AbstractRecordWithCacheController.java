@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 
 import models.IDataRecord;
 import models.Lesson;
+import models.LessonStudent;
 import models.Student;
 import models.StudentLesson;
 import play.cache.Cache;
@@ -219,12 +220,12 @@ public class AbstractRecordWithCacheController<T extends IDataRecord> extends
 		return s;
 	}
 
-	public static List<StudentLesson> cloneIt(List<StudentLesson> l){
+	public static <O> List<O> cloneIt(List<O> l){
 
 		if(l==null || l.isEmpty())
 			return l;
-		List<StudentLesson> a=new ArrayList<StudentLesson>();
-		for(StudentLesson o:l)
+		List<O> a=new ArrayList<O>();
+		for(O o:l)
 			a.add(o);
 		return a;
 	}
@@ -262,8 +263,7 @@ public class AbstractRecordWithCacheController<T extends IDataRecord> extends
 		return null;
 	}
 
-	protected static void updateRelation(Iterable<StudentLesson> l,
-			Student model) {
+	protected static void updateRelation(Iterable<StudentLesson> l, Student model) {
 		if (l == null)
 			return;
 		for (StudentLesson o : l)
@@ -271,10 +271,26 @@ public class AbstractRecordWithCacheController<T extends IDataRecord> extends
 				o.setStudentId(model.getId());
 	}
 
-	protected static void updateRelation(Iterable<StudentLesson> l, Lesson model) {
+//	protected static void updateRelation(Iterable<LessonStudent> l, Student model) {
+//		if (l == null)
+//			return;
+//		for (StudentLesson o : l)
+//			if (o != null)
+//				o.setStudentId(model.getId());
+//	}
+
+//	protected static void updateRelation(Iterable<StudentLesson> l, Lesson model) {
+//		if (l == null)
+//			return;
+//		for (StudentLesson o : l)
+//			if (o != null)
+//				o.setLessonId(model.getId());
+//	}
+
+	protected static void updateRelation(Iterable<LessonStudent> l, Lesson model) {
 		if (l == null)
 			return;
-		for (StudentLesson o : l)
+		for (LessonStudent o : l)
 			if (o != null)
 				o.setLessonId(model.getId());
 	}

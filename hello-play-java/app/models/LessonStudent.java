@@ -7,24 +7,23 @@ import javax.persistence.Table;
 
 @Table(name="Subscription")
 @Entity@Access(AccessType.FIELD)
-public class StudentLesson extends Subscription {
-
+public class LessonStudent extends Subscription {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public StudentLesson() {
+	public LessonStudent() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public StudentLesson(Long id, Long studentId, Long lessonId) {
+	public LessonStudent(Long id, Long studentId, Long lessonId) {
 		super(id, studentId, lessonId);
 		// TODO Auto-generated constructor stub
 	}
 
-	public StudentLesson(Long studentId, Long lessonId) {
+	public LessonStudent(Long studentId, Long lessonId) {
 		super(studentId, lessonId);
 		// TODO Auto-generated constructor stub
 	}

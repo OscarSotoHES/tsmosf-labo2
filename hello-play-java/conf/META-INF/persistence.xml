@@ -7,7 +7,9 @@
 	<persistence-unit name="defaultPersistenceUnit"
 		transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<class>models.Subscription</class>
 		<class>models.StudentLesson</class>
+		<class>models.LessonStudent</class>
 		<class>models.Lesson</class>
 		<class>models.Student</class>
 		<!-- <non-jta-data-source>DefaultDS</non-jta-data-source> -->

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import models.Lesson;
+import models.LessonStudent;
 import models.StudentLesson;
 import play.libs.Json;
 import play.mvc.BodyParser;
@@ -89,7 +90,7 @@ public class LessonController extends AbstractRecordController<Lesson> {
 				JsonNode json = request().body().asJson();
 				model = Json.fromJson(json, Lesson.class);
 			}
-			Iterable<StudentLesson> l = model.getStudents();
+			Iterable<LessonStudent> l = model.getStudents();
 			LessonController me = me();
 
 			model = me.createIt(model);
@@ -128,7 +129,7 @@ public class LessonController extends AbstractRecordController<Lesson> {
 				model = Json.fromJson(json, Lesson.class);
 			}
 			model.setId(id);
-			Iterable<StudentLesson> l = model.getStudents();
+			Iterable<LessonStudent> l = model.getStudents();
 			if (l != null)
 				updateRelation(l, model);
 			LessonController me = me();

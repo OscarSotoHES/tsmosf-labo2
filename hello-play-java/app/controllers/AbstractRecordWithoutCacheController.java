@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 
 import models.IDataRecord;
 import models.Lesson;
+import models.LessonStudent;
 import models.Student;
 import models.StudentLesson;
 
@@ -186,10 +187,10 @@ public class AbstractRecordWithoutCacheController<T extends IDataRecord> extends
     }
 	
 
-    protected static void updateRelation(Iterable<StudentLesson> l, Lesson model){
+    protected static void updateRelation(Iterable<LessonStudent> l, Lesson model){
     	if(l==null)
     		return;
-		for(StudentLesson o:l)
+		for(LessonStudent o:l)
 			if(o!=null)
 				o.setLessonId(model.getId());
     }
