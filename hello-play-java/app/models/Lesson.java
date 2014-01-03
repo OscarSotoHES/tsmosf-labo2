@@ -1,9 +1,7 @@
 package models;
 
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -18,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Persistence;
 
@@ -33,9 +32,9 @@ public class Lesson implements IDataRecord {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, orphanRemoval=true)
 	@JoinColumn(name = "lesson_id", referencedColumnName = "id")
-	private Collection<StudentLesson> students = new HashSet<StudentLesson>();
+	private List<StudentLesson> students = new ArrayList<StudentLesson>();
 
 	@Column
 	private String name;
@@ -71,11 +70,11 @@ public class Lesson implements IDataRecord {
 		this.name = name;
 	}
 
-	public Collection<StudentLesson> getStudents() {
+	public List<StudentLesson> getStudents() {
 		return students;
 	}
 
-	public void setStudents(Collection<StudentLesson> students) {
+	public void setStudents(List<StudentLesson> students) {
 		this.students = students;
 	}
 
@@ -94,13 +93,8 @@ public class Lesson implements IDataRecord {
 	}
 
 	public StudentLesson findStudent(long argv) {
-//		int i = indexOfStudent(argv);
-//		if (i < 0)
-//			return null;
-//		return students.get(i);
 		if (students == null || students.isEmpty())
 			return null;
-		// Long v=Long.valueOf(argv);
 		for (StudentLesson dr : students) {
 			if (dr == null || dr.getId() == null)
 				continue;
@@ -111,12 +105,6 @@ public class Lesson implements IDataRecord {
 		return null;
 	}
 
-	// public StudentLesson findStudent(long argv){
-	// int i = indexOfStudent(argv);
-	// if(i<0)
-	// return null;
-	// return students.get(i);
-	// }
 	// public int indexOfStudent(long argv){
 	// if(students==null ||students.isEmpty())
 	// return -1;
@@ -134,7 +122,7 @@ public class Lesson implements IDataRecord {
 	//
 	@Override
 	public String toString() {
-		final int maxLen = 10;
+		//final int maxLen = 10;
 		StringBuilder builder = new StringBuilder();
 		builder.append("Lesson [");
 		if (id != null) {

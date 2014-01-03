@@ -29,7 +29,7 @@ public class Student implements IDataRecord {
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 
-	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, orphanRemoval=true)
+	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, orphanRemoval=true)	
 	@JoinColumn(name="student_id", referencedColumnName="id")
 	private List<StudentLesson> lessons=new ArrayList<StudentLesson>();
 

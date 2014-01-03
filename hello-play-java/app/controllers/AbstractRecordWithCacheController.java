@@ -59,10 +59,20 @@ public class AbstractRecordWithCacheController<T extends IDataRecord> extends
 		List<T> l = createQuery(query, args).getResultList();
 		if (l == null || l.isEmpty())
 			return r;
-		for (T o : l)
+		for (T o : l){
 			r.add(o);
+			if(o instanceof Student){
+				Student dr = Student.class.cast(o);
+				dr.setLessons(cloneIt(dr.getLessons()));
+			}else if(o instanceof Lesson){
+				Lesson dr = Lesson.class.cast(o);
+				dr.setStudents(cloneIt(dr.getStudents()));
+			}
+		}
 		return r;
 	}
+	
+	
 
 	public T get(final Long id) {
 		try {
@@ -209,6 +219,15 @@ public class AbstractRecordWithCacheController<T extends IDataRecord> extends
 		return s;
 	}
 
+	public static List<StudentLesson> cloneIt(List<StudentLesson> l){
+
+		if(l==null || l.isEmpty())
+			return l;
+		List<StudentLesson> a=new ArrayList<StudentLesson>();
+		for(StudentLesson o:l)
+			a.add(o);
+		return a;
+	}
 	public static <T extends IDataRecord> long nexId(List<T> items) {
 		long r = -1;
 		for (T o : items)
