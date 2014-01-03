@@ -1,2 +1,4 @@
 hello-play
 *~
+*.bak
+*.bak[0-9]+
