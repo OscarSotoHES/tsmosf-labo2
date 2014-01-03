@@ -16,7 +16,74 @@ Après ce bref descriptif, nous pouvons relever que les données de session avec
 
 
 ### API Rest
-*Description de l'API*
+*Description de l'API hébergée sur https://schoolapi.apiary.io/*. School API est une *API simpliste* qui permet de gérer des cours et des élèves. Toutes les méthodes CRUD sont impémentées. Aucun test d'intégrité n'est effectué dans le code. Cette API est uniquement utilisée comme contexte pour les tests de performances du présent projet. L'API contient deux ressources nommées Students et Lessons. À titre d'exemple voici quelques exemples d'utilisations :
+
+##### Students Collection [/students]
+###### List all Students and lessons where they are registred [GET]
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 1, 
+                "lessons": [], 
+                "name": "Joe Smith"
+            },
+            {
+                "id": 2, 
+                "lessons": 
+                [
+                    {
+                        "id": 1,
+                        "studentId": 2, 
+                        "lessonId":1
+                    }
+                ], 
+                "name": "Komanda Phanzu"
+            }
+        ]
+
+###### Create a Lesson [POST]
++ Request (application/json)
+
+        {
+            "name": "CorpCom"
+        }
+
++ Response 201 (application/json)
+
+        {
+            "id": 3, 
+            "students": [],
+            "name": "CorpCom"
+        }
+
+###### Update a Lesson, used primarly to add students in a lesson [PUT]
++ Request (application/json)
+
+        {
+            "students": 
+            [
+                {
+                    "studentId": 3
+                }
+            ], 
+            "name": "NSA"
+        }
+        
++ Response 200 (application/json)
+
+        {
+            "id": 2, 
+            "students": 
+            [
+                {
+                    "id": 4, 
+                    "studentId": 3, 
+                    "lessonId": 2
+                }
+            ],
+            "name": "NSA"
+        }
 
 ### Architecture 
 *serveurs, base de données, etc*
