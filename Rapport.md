@@ -8,6 +8,13 @@ Le but du projet est de tester le framework Play dans un cluster ainsi que les g
 ### Play VS Java EE
 *Explain how Play approaches HTTP session state management and how it is different from the traditional Java EE approach. Explain the benefits of this approach*
 
+Play permet de stocker des données de session dans le cookie de la prochaine requête HTTP. Ce qui signifie que les données de session sont stockées sur le client et non sur le serveur. La taille des cookies est limitée à 4 Ko et elle ne peut contenir que des chaînes de caractères clé - valeur. Les cookies sont signés avec une clé secrète de sorte que le client ne puisse pas modifier les données du cookie. Attention, les données de session ne sont pas destinées à être utilisées comme un cache, au besoin Play intègre le mécanisme de cache sur le côté serveur (Ehcache / memcached).
+
+Java EE permet l'utilisation de conteneur EJB stateful du côté serveur. Ces EJB stocke non seulement les données de la session mais ils gèrent aussi le cycle de vie, les transactions, la sécurité, le cache d'instance, sont thread safe, etc. De ce faite, il n'y a pas besoin d'écrire du code pour ajouter tous ces services. Par contre, les performances sont moins bonnes qu'avec les EJB stateless ou le gestionnaire de session du framework Play.
+
+Après ce bref descriptif, nous pouvons relever que les données de session avec Play sont stockées sur le côté client, contrairement à Java EE avec les EJB Stateful. Les serveurs web implémentés avec Play peuvent être interrogés par plusieurs clients à la fois et ils peuvent traiter n'importe quelle requête de n'importe quel client. Pour se faire, le code serveur récupère les données de session stockées dans le cookie pour personnaliser ces réponses HTTP en fonction de chacun de ces clients. Avec Java EE chaque client est traité par un EJB stateful différent, de se faite le serveur sera plus rapidement saturé qu'un serveur qui utilise un framework Play. Bien évidement, un EJB est beaucoup plus complet en terme de fonctionnalité que le gestionnaire de session simpliste de Play. Rien ne nous empêche avec Java EE pour palier aux problèmes de performance d'utiliser l'approche du framework Play. Nous pouvons toujours utiliser les EJB stateless et la HttpSession qui gères les sessions par l'intermédiaire des cookies soit la réécriture des URLs.
+
+
 ### API Rest
 *Description de l'API*
 
