@@ -43,7 +43,7 @@ public class LessonControllerCache extends Controller {
         
 	public static Result get(long id) {
 		 try {
-                        Lesson l = Cache.getOrElse(lesson + id, new Callable<Lesson>() {
+                        Lesson l = Cache.getOrElse("lesson" + id, new Callable<Lesson>() {
                                 @Override
                                 public Lesson call() throws Exception {
                                         Lesson lesson = Lesson.find.byId(id);
