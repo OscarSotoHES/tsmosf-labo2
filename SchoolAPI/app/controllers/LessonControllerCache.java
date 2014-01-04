@@ -54,13 +54,11 @@ public class LessonControllerCache extends Controller {
 			                return lesson;
                                 }
                         }, 10000);
-                        return l;
+                        return ok(Json.toJson(l);
                 } catch (Exception ex) {
                         System.out.println("Exception in get(" + id + ")" + ex);
                         return null;
                 }
-		
-                return ok(Json.toJson(lesson));
 	}
 	
 	private static void addToCache(Lesson lesson) {
