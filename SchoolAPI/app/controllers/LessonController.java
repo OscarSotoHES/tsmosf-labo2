@@ -13,11 +13,22 @@ public class LessonController extends Controller {
 
 	public static Result getAll() {
 		List<Lesson> lessons = Lesson.find.all();
+		for(Lesson lesson : lessons)
+		{
+			for(Student student : lesson.students)
+			{
+				student.name = Student.find.byId(student.id).name;
+			}
+		}
 		return ok(Json.toJson(lessons));
 	}
         
 	public static Result get(long id) {
 		Lesson lesson = Lesson.find.byId(id);
+		for(Student student : lesson.students)
+                {
+                	student.name = Student.find.byId(student.id).name;
+                }
                 return ok(Json.toJson(lesson));
 	}
 
@@ -31,13 +42,14 @@ public class LessonController extends Controller {
 	public static Result update(long id) {
 		JsonNode json = request().body().asJson();
 		Lesson lesson = Json.fromJson(json, Lesson.class);
+		lesson.id = id;
 		boolean end = false;
 		int i = 0;
 		while(!end)
 		{ 
 			try
 			{
-				lesson.update(id);
+				lesson.update();
 				end = true;
 			}
 			catch(Exception ex)

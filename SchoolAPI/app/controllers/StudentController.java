@@ -30,7 +30,8 @@ public class StudentController extends Controller {
 	public static Result update(long id) {
 		JsonNode json = request().body().asJson();
 		Student student = Json.fromJson(json, Student.class);
-		student.update(id);
+		student.id = id;
+		student.update();
 		return ok(Json.toJson(student));
 	}
 
