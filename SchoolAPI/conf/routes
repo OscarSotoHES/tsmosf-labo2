@@ -9,6 +9,11 @@ GET     /                           controllers.Application.index()
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 GET	/cache/lessons	controllers.LessonControllerCache.getAll
+GET 	/cache/lessons/:id	controllers.LessonControllerCache.get(id: Long)
+POST	/cache/lessons	controllers.LessonControllerCache.create
+PUT	/cache/lessons/:id	controllers.LessonControllerCache.update(id: Long)
+DELETE  /cache/lessons/:id	controllers.LessonControllerCache.delete(id: Long)
+
 GET 	/lessons 	controllers.LessonController.getAll
 GET 	/lessons/:id	controllers.LessonController.get(id: Long)
 POST	/lessons	controllers.LessonController.create
