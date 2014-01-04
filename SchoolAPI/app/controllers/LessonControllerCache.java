@@ -41,7 +41,7 @@ public class LessonControllerCache extends Controller {
                 }
 	}
         
-	public static Result get(long id) {
+	public static Result get(final long id) {
 		 try {
                         Lesson l = Cache.getOrElse("lesson" + id, new Callable<Lesson>() {
                                 @Override
