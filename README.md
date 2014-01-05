@@ -1,21 +1,16 @@
-tsmosf-labo2
+Welcome to TSMOSF_Labo2
 ============
 
-##VMs Configuration
+This github repository contain an API Rest built with Play and Memcached. The goal of this project is to test performances of a Play service with cache and with a cluster of play servers.
 
-###Users
+##Documentation
 
-| Service               | UserName  | Password
-|-----------------------|-----------|-----------
-| Servers administrator | osfadmin  | ********
-| MySQL                 | root      | ********
-| MySQL                 | adm_tsm   | OSFMysql2
+- Rapport.md:  contains a complete project's description and all test's results. (in french)
+- SchoolAPI.md: contains the complete documentation of the API
+- VMConfiguration.md: contains the configuration of our virtual machines
+- Presentation/Caching-Team1.ppt is a PowerPoint presentation of this project
 
-###Machines
+##Source code
 
-| Hostname     | IPAddress    | SSH Port (In/Out) | HTTP Port (In/Out) | Other port
-|--------------|--------------|-------------------|--------------------|--------------
-| loadbalancer | 192.168.2.50 | 22 / 2200         | 80 / 8080          |
-| play1        | 192.168.2.51 | 22 / 2201         | 9000 / 8081        | Memcached : 11211
-| play2        | 192.168.2.52 | 22 / 2202         | 9000 / 8082        | Memcached : 11211
-| mysql        | 192.168.2.53 | 22 / 2203         | -                  | Mysql: 3306
+- SchoolAPI folder: contains the API's code
+- JMeter folder: contains the tests plans used to test the performances of the API
