@@ -98,7 +98,7 @@ public class StudentControllerCache extends Controller {
 
         public static Result delete(long id) {
                 Cache.remove("student" + id);
-                Lesson.find.ref(id).delete();
+                Student.find.ref(id).delete();
                 return ok();
         }
 }
