@@ -10,26 +10,26 @@ import models.*;
 import views.html.*;
 
 public class LessonController extends Controller {
-
+        private static Lesson initStudentNames(Lesson lesson) {
+             for(Student student : lesson.students)
+             {
+                student.name = StudentController.get(student.id).name;
+             }
+             return lesson;
+        }
+        
 	public static Result getAll() {
 		List<Lesson> lessons = Lesson.find.all();
 		for(Lesson lesson : lessons)
 		{
-			for(Student student : lesson.students)
-			{
-				student.name = Student.find.byId(student.id).name;
-			}
+			initStudentNames(lesson);
 		}
 		return ok(Json.toJson(lessons));
 	}
         
 	public static Result get(long id) {
 		Lesson lesson = Lesson.find.byId(id);
-		for(Student student : lesson.students)
-                {
-                	student.name = Student.find.byId(student.id).name;
-                }
-                return ok(Json.toJson(lesson));
+                return ok(Json.toJson(initStudentNames(lesson)));
 	}
 
 	public static Result create() {
