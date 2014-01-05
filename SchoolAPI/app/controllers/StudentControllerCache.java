@@ -33,19 +33,23 @@ public class StudentControllerCache extends Controller {
                 }
         }
         
-        public static Result get(final long id) {
-                 try {
+        public static Student getStudent(final long id) {
+                  try {
                         Student s = Cache.getOrElse("student" + id, new Callable<Student>() {
                                 @Override
                                 public Student call() throws Exception {
                                         return Student.find.byId(id);
                                 }
                         }, 10000);
-                        return ok(Json.toJson(s));
+                        return s;
                 } catch (Exception ex) {
                         System.out.println("Exception in get(" + id + ")" + ex);
                         return null;
-                }
+                } 
+        }
+        
+        public static Result get(long id) {
+              return ok(Json.toJson(getStudent(id));
         }
         
         private static void addToCache(Student student) {
