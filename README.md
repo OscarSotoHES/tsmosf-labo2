@@ -5,12 +5,12 @@ This github repository contain an API Rest built with Play and Memcached. The go
 
 ##Documentation
 
-- Rapport.md:  contains a complete project's description and all test's results. (in french)
-- SchoolAPI.md: contains the complete documentation of the API
-- VMConfiguration.md: contains the configuration of our virtual machines
-- Presentation/Caching-Team1.ppt is a PowerPoint presentation of this project
+- [Rapport](https://github.com/yenyen/tsmosf-labo2/blob/master/Rapport.md):  contains a complete project's description and all test's results. (in french)
+- [SchoolAPI](https://github.com/yenyen/tsmosf-labo2/blob/master/SchoolAPI.md): contains the complete documentation of the API
+- [VMConfiguration](https://github.com/yenyen/tsmosf-labo2/blob/master/VMConfiguration.md): contains the configuration of our virtual machines
+- [Presentation/Caching-Team1](https://github.com/yenyen/tsmosf-labo2/blob/master/Presentation/Caching-Team1.pptx) is a PowerPoint presentation of this project
 
 ##Source code
 
-- SchoolAPI folder: contains the API's code
-- JMeter folder: contains the tests plans used to test the performances of the API
+- [SchoolAPI folder](https://github.com/yenyen/tsmosf-labo2/blob/master/SchoolAPI): contains the API's code
+- [JMeter folder](https://github.com/yenyen/tsmosf-labo2/blob/master/JMeter): contains the tests plans used to test the performances of the API
