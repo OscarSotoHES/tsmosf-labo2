@@ -45,12 +45,14 @@ public class StudentControllerCache extends Controller {
                         if(s == null)
                         {
                                 s = new Student();
-                                s.name = "Erreur";
+                                s.name = "NULL";
                         }
                         return s;
                 } catch (Exception ex) {
                         System.out.println("Exception in get(" + id + ")" + ex);
-                        return null;
+                        Student s = new Student();
+                        s.name = "Error" + ex;
+                        return s;
                 } 
         }
         
