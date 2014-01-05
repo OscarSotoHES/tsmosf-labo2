@@ -41,7 +41,7 @@ public class LessonControllerCache extends Controller {
         private static Lesson initStudentNames(Lesson lesson) {
              for(Student student : lesson.students)
              {
-                student.name = StudentController.get(student.id).name;
+                student.name = StudentControllerCache.get(student.id).name;
              }
              return lesson;
         }
