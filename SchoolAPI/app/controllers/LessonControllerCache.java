@@ -22,10 +22,7 @@ public class LessonControllerCache extends Controller {
                                         List<Lesson> l = Lesson.find.all();
                                         for(Lesson lesson : l)
                                         {
-                                                for(Student student : lesson.students)
-                                                {
-                                                        student.name = Student.find.byId(student.id).name;
-                                                }
+                                                initStudentNames(lesson);
                                         }
                                         return l;                        
                                 }
@@ -41,17 +38,21 @@ public class LessonControllerCache extends Controller {
                 }
         }
         
+        private static Lesson initStudentNames(Lesson lesson) {
+             for(Student student : lesson.students)
+             {
+                student.name = StudentController.get(student.id).name;
+             }
+             return lesson;
+        }
+        
         public static Result get(final long id) {
                  try {
                         Lesson l = Cache.getOrElse("lesson" + id, new Callable<Lesson>() {
                                 @Override
                                 public Lesson call() throws Exception {
                                         Lesson lesson = Lesson.find.byId(id);
-                                        for(Student student : lesson.students)
-                                        {
-                                                student.name = Student.find.byId(student.id).name;
-                                        }
-                                        return lesson;
+                                        return initStudentNames(lesson);
                                 }
                         }, 10000);
                         return ok(Json.toJson(l));
