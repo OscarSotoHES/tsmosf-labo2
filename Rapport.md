@@ -6,7 +6,6 @@
 Le but du projet est de tester le framework Play dans un cluster ainsi que les gains de performances lors de l'ajout d'une couche de cache.
 
 ### Play VS Java EE
-*Explain how Play approaches HTTP session state management and how it is different from the traditional Java EE approach. Explain the benefits of this approach*
 
 Play permet de stocker des données de session dans le cookie de la prochaine requête HTTP. Ce qui signifie que les données de session sont stockées sur le client et non sur le serveur. La taille des cookies est limitée à 4 Ko et elle ne peut contenir que des chaînes de caractères clé - valeur. Les cookies sont signés avec une clé secrète de sorte que le client ne puisse pas modifier les données du cookie. Attention, les données de session ne sont pas destinées à être utilisées comme un cache, au besoin Play intègre le mécanisme de cache sur le côté serveur (Ehcache / memcached).
 
@@ -14,35 +13,26 @@ Java EE permet l'utilisation de conteneur EJB stateful du côté serveur. Ces EJ
 
 Après ce bref descriptif, nous pouvons relever que les données de session avec Play sont stockées sur le côté client, contrairement à Java EE avec les EJB Stateful. Les serveurs web implémentés avec Play peuvent être interrogés par plusieurs clients à la fois et ils peuvent traiter n'importe quelle requête de n'importe quel client. Pour se faire, le code serveur récupère les données de session stockées dans le cookie pour personnaliser ces réponses HTTP en fonction de chacun de ces clients. Avec Java EE chaque client est traité par un EJB stateful différent, de se faite le serveur sera plus rapidement saturé qu'un serveur qui utilise un framework Play. Bien évidement, un EJB est beaucoup plus complet en terme de fonctionnalité que le gestionnaire de session simpliste de Play. Rien ne nous empêche avec Java EE pour palier aux problèmes de performance d'utiliser l'approche du framework Play. Nous pouvons toujours utiliser les EJB stateless et la HttpSession qui gères les sessions par l'intermédiaire des cookies soit la réécriture des URLs.
 
-
 ### API Rest
-*Description de l'API hébergée sur https://schoolapi.apiary.io/*. School API est une *API simpliste* qui permet de gérer des cours et des élèves. Toutes les méthodes CRUD sont impémentées. Aucun test d'intégrité n'est effectué dans le code. Cette API est uniquement utilisée comme contexte pour les tests de performances du présent projet. L'API contient deux ressources nommées Students et Lessons. À titre d'exemple voici quelques exemples d'utilisations :
 
-##### Students Collection [/students]
-###### List all Students and lessons where they are registred [GET]
+School API est une *API simpliste* qui permet de gérer des cours et des élèves. Toutes les méthodes CRUD sont impémentées. Aucun test d'intégrité n'est effectué dans le code. Cette API est uniquement utilisée comme contexte pour les tests de performances du présent projet. L'API contient deux ressources nommées Students et Lessons. Voici quelques exemples d'utilisations :
+
+#### Students Collection [/students]
+##### List all Students [GET]
 + Response 200 (application/json)
 
         [
             {
                 "id": 1, 
-                "lessons": [], 
                 "name": "Joe Smith"
             },
             {
                 "id": 2, 
-                "lessons": 
-                [
-                    {
-                        "id": 1,
-                        "studentId": 2, 
-                        "lessonId":1
-                    }
-                ], 
                 "name": "Komanda Phanzu"
             }
         ]
-
-###### Create a Lesson [POST]
+#### Lesson Collection [/lessons]
+##### Create a Lesson [POST]
 + Request (application/json)
 
         {
@@ -53,37 +43,44 @@ Après ce bref descriptif, nous pouvons relever que les données de session avec
 
         {
             "id": 3, 
-            "students": [],
-            "name": "CorpCom"
+            "name": "CorpCom",
+            "students": []
         }
 
-###### Update a Lesson, used primarly to add students in a lesson [PUT]
+##### Update a Lesson, used primarly to add students in a lesson [PUT]
 + Request (application/json)
 
         {
-            "students": 
-            [
+             "name": "NSA"
+             "students": 
+             [
                 {
-                    "studentId": 3
+                    "id": 3
                 }
-            ], 
-            "name": "NSA"
+             ]
         }
         
 + Response 200 (application/json)
 
         {
             "id": 2, 
+            "name": "NSA"
             "students": 
             [
                 {
-                    "id": 4, 
-                    "studentId": 3, 
-                    "lessonId": 2
+                    "id": 3, 
+                    "name": "John Doe"
                 }
-            ],
-            "name": "NSA"
+            ]
         }
+
+La documentation complète de l'API se trouve à cette adresse : [docs.schoolapi.apiary.io](http://docs.schoolapi.apiary.io/)
+
+#### Gestion du cache
+
+Pour utiliser la version utilisant le cache de School API, il faut précédé toutes les requête par "cache". Par exemple, pour avoir la liste de tous les étudiants en utilisant le cache :
+
+	get /cache/students
 
 ### Architecture 
 *serveurs, base de données, etc*
@@ -100,7 +97,7 @@ Toutes les machines ont été installées avec Ubuntu 12.04 LTS 64 bit. Chaque m
 
 Le load balancer a la responsabilité de distribué les requêtes des utilisateurs vers les serveurs Play de manière a répartir la charge. Ainsi, il écoute les requêtes sur le port 80 et les redirige alternativement vers le port 9000 des serveurs Play. 
 
-Pour réaliser ceci, il suffit de configurer un serveur HTTP. En effet, les principaux serveurs HTTP permettent le load balancing (Apache, nginx, lighttpd, etc.) Nous avons choisi *lighttpd* car il a apparemment de meilleures performances que les serveurs Apache et qu'il est plus facile a mettre en place.
+Pour réaliser ceci, il suffit de configurer un serveur HTTP. En effet, les principaux serveurs HTTP permettent le load balancing (Apache, nginx, lighttpd, etc.) Nous avons choisi *lighttpd*, car grâce à lui, on obtient de meilleures performances qu'avec les serveurs Apache et qu'il est plus facile a mettre en place.
 
 ##### Installation et configuration de lighttpd
 
@@ -200,25 +197,20 @@ Dans le fichier *conf/application.conf*, il faut ajouter les lignes suivantes :
 Dans le fichier *build.sbt*, il faut ajouter les dépendances suivantes :
 
     libraryDependencies ++= Seq(
-            "org.hibernate" % "hibernate-entitymanager" % "3.6.9.Final",
-            "mysql" % "mysql-connector-java" % "5.1.18",
-            "org.eclipse.persistence" % "javax.persistence" % "2.0.0",
-            "org.webjars" %% "webjars-play" % "2.2.0",
-            "org.webjars" % "bootstrap" % "2.3.1",
+            ...,
             "com.github.mumoshu" %% "play2-memcached" % "0.3.0.2",
             "com.typesafe.play" %% "play-cache" % "2.2.0" withSources
     )
     resolvers ++= Seq(
-            "Local Maven Repository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository",
-        //"Local Maven Repository" at "file:///e:/_shared/_repository/maven/3.x.x",
+        "Local Maven Repository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository",
         "Spy Repository" at "http://files.couchbase.com/maven2"
     )
 
 ##### Démarrer le serveur Play
 
-Le code du projet doit être télécharger sur la machine [https://github.com/yenyen/tsmosf-labo2/archive/master.zip](https://github.com/yenyen/tsmosf-labo2/archive/master.zip)
+Le code du projet doit être téléchargé sur la machine [https://github.com/yenyen/tsmosf-labo2/archive/master.zip](https://github.com/yenyen/tsmosf-labo2/archive/master.zip)
 
-Depuis le dossier *hello-play-java*, lancer la commande :
+Depuis le dossier *SchoolAPI*, lancer la commande :
 
 	play run
 

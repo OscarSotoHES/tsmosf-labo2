@@ -1,31 +1,22 @@
 HOST: https://schoolapi.apiary.io/
 
 # SchoolAPI
-School API is a *simple API* that allow to manage students and lessons.
+School API is a *simple API* that allow to manage students and lessons. Students can enroll in lessons.
 
 # Group Students
 Students related resources of the **School API**
 
 ## Students Collection [/students]
-### List all Students and lessons where they are registred [GET]
+### List all Students [GET]
 + Response 200 (application/json)
 
         [
             {
                 "id": 1, 
-                "lessons": [], 
                 "name": "Joe Smith"
             },
             {
                 "id": 2, 
-                "lessons": 
-                [
-                    {
-                        "id": 1,
-                        "studentId": 2, 
-                        "lessonId":1
-                    }
-                ], 
                 "name": "Komanda Phanzu"
             }
         ]
@@ -41,7 +32,6 @@ Students related resources of the **School API**
 
         {
             "id": 3, 
-            "lessons": [], 
             "name": "Aurelien Thevo"
         }
 
@@ -57,14 +47,6 @@ A single Student object with all its lessons and details
 
             {
                 "id": 2, 
-                "lessons": 
-                [
-                    {
-                        "id": 1,
-                        "studentId": 2, 
-                        "lessonId":1
-                    }
-                ], 
                 "name": "Komanda Phanzu"
             }
 
@@ -80,7 +62,6 @@ A single Student object with all its lessons and details
     
             {
                 "id": 3, 
-                "lessons": [], 
                 "name": "Aurelien Thevoz"
             }
 
@@ -94,7 +75,7 @@ A single Student object with all its lessons and details
 Lessons related resources of the **School API**
 
 ## Lessons Collection [/lessons]
-### List all Lessons where they are registred [GET]
+### List all lessons [GET]
 + Response 200 (application/json)
 
         [
@@ -103,21 +84,20 @@ Lessons related resources of the **School API**
                 "students": 
                 [
                     {
-                        "id": 1, 
-                        "studentId": 2, 
-                        "lessonId": 1
+                        "id": 2, 
+                        "name": "Komanda Phanzu"
                     }
                 ],
                 "name": "OSF"
             },
             {
                 "id": 2,
-                "students": [],
-                "name": "NSA"
+                "name": "NSA",
+                "students": []
             }
         ]
 
-### Create a Lesson [POST]
+### Create a lesson [POST]
 + Request (application/json)
 
         {
@@ -128,8 +108,8 @@ Lessons related resources of the **School API**
 
         {
             "id": 3, 
-            "students": [],
-            "name": "CorpCom"
+            "name": "CorpCom",
+            "students": []
         }
 
 ## Lessons [/lessons/{id}]
@@ -144,36 +124,35 @@ A single Lesson object with all his registred students
     
             {
                 "id": 2,
-                "students": [],
-                "name": "NSA"
+                "name": "NSA",
+                "students": []
             }
 
 ### Update a Lesson, used primarly to add students in a lesson [PUT]
 + Request (application/json)
 
         {
-            "students": 
+             "name": "NSA",
+				"students": 
             [
                 {
-                    "studentId": 3
+                    "id": 3
                 }
-            ], 
-            "name": "NSA"
+            ]
         }
         
 + Response 200 (application/json)
 
         {
             "id": 2, 
+            "name": "NSA",
             "students": 
             [
                 {
-                    "id": 4, 
-                    "studentId": 3, 
-                    "lessonId": 2
+                    "id": 3, 
+                    "name": "Aurelien Thevoz"
                 }
-            ],
-            "name": "NSA"
+            ]
         }
 
 ### Remove a Lesson [DELETE]
