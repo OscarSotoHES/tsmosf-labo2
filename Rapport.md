@@ -290,7 +290,7 @@ Le test s'effectue, pour chaque configuration, en douze étapes simulant une uti
 11. Suppression de l'étudiant (DELETE /students/id)
 12. 10x Get de tous les étudiants (GET /students)
 
-Pour observer les différences entre les configurations lors d'une montée en charge, ce test a été lancé avec différents nombres de threads (10 / 50 / 100 / 200). Pour avoir des statistiques cohérantes les mesures sont calculées avec 5 itérations.
+Pour observer les différences entre les configurations lors d'une montée en charge, ce test a été lancé avec différents nombres de threads (10 / 50 / 100). Pour avoir des statistiques cohérantes les mesures sont calculées avec 5 itérations.
 
 ##### 3 - Remove all Data
 
@@ -300,9 +300,76 @@ Cette dernière étape consiste à supprimer toutes les données créées pour c
 
 Pour éviter au maximum les pertes de performances dues au réseau, les tests ont été effectués depuis un ordinateur connecté sur le même réseau local que les serveurs, en utilisant les adresses IP locales.
 
+#### Résultats obtenu
+
+##### 10 threads simultanés (x5 itérations)
+
+Voici les résultats obtenus regroupés par opération et configuration. Les valeurs sont les temps de réponses moyens.
+
+| Opération  | One server | Cluster   | One server + Cache | Cluster + Cache
+|------------|-----------:|----------:|-------------------:|-----------------:
+| POST       | 11.5 ms    | 10 ms     | 9.5 ms             | 10.5 ms 
+| PUT        | 13 ms      | 10.5 ms   | 10.5 ms            | 12 ms
+| GET (one)  | 13.7 ms    | 11.5 ms   | 5.7 ms             | 5 ms
+| GET (all)  | 94.3 ms    | 96.4 ms   | 54 ms              | 60.4 ms
+| DELETE     | 9.5 ms     | 9 ms      | 10.5 ms            | 9.5 ms
+| **Total**  | **44 ms**  | **44 ms** | **25 ms**          | **28 ms**
+
+Comme on peut le constater dans ces résultats, l'utilisation d'un cluster avec une faible charge n'amène pas de meilleures performances. Cela a même tendance à ajouter un certains temps de latence supplémentaire, probablement dû au temps pris pour passer par le *load balancer*.
+
+Par contre, l'utilisation du cache améliore grandement les performances lors des opérations *GET* (environ 50%) et ne péjore pas vraiment les perforances lors des autres opérations.
+
+##### 50 threads simultanés (x5 itérations)
+
+Ci-dessous, les résultats obtenus avec 50 threads simultanés :
+
+| Opération  | One server  | Cluster    | One server + Cache | Cluster + Cache
+|------------|------------:|-----------:|-------------------:|-----------------:
+| POST       | 213 ms      | 151.5 ms   | 117 ms             | 93.5 ms 
+| PUT        | 192.5 ms    | 150.5 ms   | 117 ms             | 84 ms
+| GET (one)  | 207.8 ms    | 159.3 ms   | 119.1 ms           | 83.9 ms
+| GET (all)  | 273.8 ms    | 266.7 ms   | 167.9 ms           | 159.9 ms
+| DELETE     | 282 ms      | 159 ms     | 142.5 ms           | 92.5 ms
+| **Total**  | **237 ms**  | **200 ms** | **139 ms**         | **114 ms**
+
+Avec cinquante threads, l'utilisation d'un cluster améliore, cette fois les performances d'environ 20%. Sans le cluster, le serveur est surchargé et n'arrive plus a répondre rapidement aux requêtes.
+
+L'utilisation du cache reste, cependant, nettement plus avantageux avec environ 40% d'amélioration.
+
+##### 100 threads simultanés (x5 itérations)
+
+Ci-dessous, les résultats obtenus avec 100 threads simultanés :
+
+| Opération  | One server  | Cluster    | One server + Cache | Cluster + Cache
+|------------|------------:|-----------:|-------------------:|-----------------:
+| POST       | 483 ms      | 439.5 ms   | 259 ms             | 221 ms 
+| PUT        | 497.5 ms    | 432.5 ms   | 261.5 ms           | 252 ms
+| GET (one)  | 521.5 ms    | 442.8 ms   | 263.6 ms           | 239.5 ms
+| GET (all)  | 581 ms      | 569.3 ms   | 299.5 ms           | 306 ms
+| DELETE     | 562.5 ms    | 465 ms     | 284 ms             | 271.5 ms
+| **Total**  | **543 ms**  | **492 ms** | **278 ms**         | **267 ms**
+
+Avec cent threads nous obtenons sensiblement le même rapport de performances entre les différentes configurations qu'avec cinquante threads. Ainsi, tous les temps de latences ont un peu plus de doublés.
+
+Le cache améliore, donc, d'environ 40% les performances et le cluster de seulement 20%.
+
 ### Questions
 
 #### Question 1: What is the performance impact of using a caching layer when implementing a REST API with Play?
+
+L'utilisation du cache améliore nettement les performances. D'après nos tests, ceci diminue d'environ 40% les temps de réponses généraux. 
+
+Avec une faible charge, seules les opérations "GET" sont améliorée par l'utilisation du cache. Les autres opérations ne sont pas tellement impactée. En effet, la mise à jour du cache est rapide et ne péjore pas signifivativement les performances.
+
+Par contre, lors d'une montée en charge, les serveurs et la base de données étant moins solicitées par les opérations "GET", les autres opérations peuvent ainsi bénéficier de plus de ressources et gagner en performance.
+
+Le cache ne s'utilise, cependant pas dans toutes les utilisations et peut nuire aux performances s'il est mal utilisé. 
+
+Tout d'abord, si les clients réalisent beaucoups plus d'opération de mise à jour (PUT, POST, DELETE) que de "GET" alors le cache n'améliora pas les performances.
+
+Ensuite, il faut faire attention de ne mettre que les informations utiles en cache. En effet, il ne faut pas oublié que chaque valeur mise en cache utilise de la mémoire. Si à cause du cache, la machine doit paginé alors les performances peuvent être désastreuse. 
+
+En résumé, le cache, s'il est bien utilisé et dans certains cas, peut grandement améliorer les performances d'une API Rest avec Play.
 
 #### Question 2: How is it possible to use a caching layer in a cluster environment, when several Play “nodes” are setup to serve HTTP requests?
 
