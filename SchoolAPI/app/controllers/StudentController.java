@@ -20,7 +20,7 @@ public class StudentController extends Controller {
 	}
         
 	public static Result get(long id) {
-                return ok(Json.toJson(getStudent(student)));
+                return ok(Json.toJson(getStudent(id)));
 	}
 
 	public static Result create() {
