@@ -349,7 +349,7 @@ Ci-dessous, les résultats obtenus avec 100 threads simultanés :
 | DELETE     | 562.5 ms    | 465 ms     | 284 ms             | 271.5 ms
 | **Total**  | **543 ms**  | **492 ms** | **278 ms**         | **267 ms**
 
-Avec cent threads nous obtenons sensiblement le même rapport de performances entre les différentes configurations qu'avec cinquante threads. Ainsi, tous les temps de latences ont un peu plus de doublés.
+Avec cent threads nous obtenons sensiblement le même rapport de performances entre les différentes configurations qu'avec cinquante threads. Ainsi, tous les temps de latences ont un peu plus que doublés.
 
 Le cache améliore, donc, d'environ 40% les performances et le cluster de seulement 20%.
 
