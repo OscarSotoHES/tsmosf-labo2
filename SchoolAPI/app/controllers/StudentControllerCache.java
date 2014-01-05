@@ -41,10 +41,11 @@ public class StudentControllerCache extends Controller {
                                         return Student.find.byId(id);
                                 }
                         }, 10000);
+                        //Cache.set("student" + id, student);
                         return s;
                 } catch (Exception ex) {
                         System.out.println("Exception in get(" + id + ")" + ex);
-                        return null;
+                        throw ex;
                 } 
         }
         
