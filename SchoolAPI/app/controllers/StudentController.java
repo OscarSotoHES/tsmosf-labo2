@@ -14,10 +14,13 @@ public class StudentController extends Controller {
 		List<Student> students = Student.find.all();
 		return ok(Json.toJson(students));
 	}
+	
+	public static Student getStudent(long id){
+		return Student.find.byId(id);
+	}
         
 	public static Result get(long id) {
-		Student student = Student.find.byId(id);
-                return ok(Json.toJson(student));
+                return ok(Json.toJson(getStudent(student)));
 	}
 
 	public static Result create() {
