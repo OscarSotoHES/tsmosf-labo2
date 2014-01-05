@@ -13,7 +13,7 @@ public class LessonController extends Controller {
         private static Lesson initStudentNames(Lesson lesson) {
              for(Student student : lesson.students)
              {
-                student.name = StudentController.get(student.id).name;
+                student.name = StudentController.getStudent(student.id).name;
              }
              return lesson;
         }
