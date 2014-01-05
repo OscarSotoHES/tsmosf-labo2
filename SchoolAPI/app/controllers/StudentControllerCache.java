@@ -49,7 +49,7 @@ public class StudentControllerCache extends Controller {
         }
         
         public static Result get(long id) {
-              return ok(Json.toJson(getStudent(id));
+              return ok(Json.toJson(getStudent(id)));
         }
         
         private static void addToCache(Student student) {
