@@ -242,12 +242,63 @@ Le fichier de configuration du projet Play (conf/application.conf) doit être co
 	db.default.user="nom_utilisateur"
 	db.default.password="mot_de_passe"
 
+### Test de performances
 
-### Test - JMeter
+Les tests de performances ont été réalisés avec Apache JMeter. 
 
-*Describe what kind of test data you have generated (and how) and what kind of traffic you have simulated. Describe the conditions of the experiment.*
+#### Installation de JMeter
 
-*Explain how someone can do another run of the experiment (how to setup a test environment, how to use tools to generate the data and simulate the traffic, etc.).*
+Il faut tout d'abord télécharger la dernière version à cette adresse : [jmeter.apache.org/download_jmeter.cgi](http://jmeter.apache.org/download_jmeter.cgi)
+
+Ensuite, il suffit de décompresser l'archive et de lancer le script *bin/jmeter.bat* sous Windows ou *bin/jmeter.sh* sour Unix.
+
+Une fois ouvert, il reste a ouvrir le plan de test (cliquer sur le menu /File/Open et choisir le fichier "SchoolAPITest_remote.jmx".)
+
+Pour finir, cliquer sur le bouton "Play" pour démarrer les tests.
+
+#### Plan de test
+
+Le plan de test développé, effectue trois étapes :
+
+##### 1 - Generate Data
+
+Cette première étape génére les donnnées nécessaires au test. 200 étudiants (100 "John Smith" et 100 "Jane Doe" et 100 cours ("OSF") sont créés. A chaque cours est attribué deux étudiants.
+
+##### 2 - Test
+
+Cette étape teste les performances du service dans quatre configurations différentes.
+
+| Configuration                   | Description
+|---------------------------------|--------------------
+| One Play Server                 | 1 serveur Play sans cache
+| Cluster Play Servers            | Cluster de deux serveurs Play (avec le loadbalancer devant) sans cache
+| One Play Server with Cache      | 1 serveur Play avec le cache
+| Cluster Play Servers with Cache | Cluster de deux serveurs Play avec le cache
+
+Le test s'effectue, pour chaque configuration, en douze étapes simulant une utilisation *normale* du service et utilisant toutes les méthodes proposées par l'API :
+
+1.  Création d'un étudiant (POST /students)
+2.  Get de l'étudiant créé (GET /students/id)
+3.  Mise à jour de l'étudiant créé (PUT /students/id)
+4.  Get de l'étudiant mis à jour (GET /students/id)
+5.  10x Get de tous les étudiants (GET /students)
+6.  Création d'un cours (POST /lessons)
+7.  Get du cours créé (GET /lessons/id)
+8.  Mise à jour du cours en inscrivant l'étudiant créé dans le cours (PUT /lessons/id)
+9.  10x Get du cours créé (GET /lessons/id)
+10. Suppression du cours (DELETE /lessons/id)
+11. Suppression de l'étudiant (DELETE /students/id)
+12. 10x Get de tous les étudiants (GET /students)
+
+Pour observer les différences entre les configurations lors d'une montée en charge, ce test a été lancé avec différents nombres de threads (10 / 50 / 100 / 200). Pour avoir des statistiques cohérantes les mesures sont calculées avec 5 itérations.
+
+##### 3 - Remove all Data
+
+Cette dernière étape consiste à supprimer toutes les données créées pour ce test.
+
+#### Condition des tests
+
+Pour éviter au maximum les pertes de performances dues au réseau, les tests ont été effectués depuis un ordinateur connecté sur le même réseau local que les serveurs, en utilisant les adresses IP locales.
 
 ### Questions
 
