@@ -353,7 +353,7 @@ Avec cent threads nous obtenons sensiblement le même rapport de performances en
 
 Le cache améliore, donc, d'environ 40% les performances et le cluster de seulement 20%.
 
-![Comparaison des performances](https://github.com/yenyen/tsmosf-labo2/blob/master/Presentation/GraphiquePerformances.png)
+![Comparaison des performances](https://github.com/yenyen/tsmosf-labo2/raw/master/Presentation/GraphiquePerformances.png)
 
 
 ### Questions
