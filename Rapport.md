@@ -353,6 +353,9 @@ Avec cent threads nous obtenons sensiblement le même rapport de performances en
 
 Le cache améliore, donc, d'environ 40% les performances et le cluster de seulement 20%.
 
+![Comparaison des performances](https://github.com/yenyen/tsmosf-labo2/blob/master/Presentation/GraphiquePerformances.png)
+
+
 ### Questions
 
 #### Question 1: What is the performance impact of using a caching layer when implementing a REST API with Play?
