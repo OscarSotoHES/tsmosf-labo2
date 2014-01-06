@@ -15,7 +15,7 @@ Après ce bref descriptif, nous pouvons relever que les données de session avec
 
 ### API Rest
 
-School API est une *API simpliste* qui permet de gérer des cours et des élèves. Toutes les méthodes CRUD sont impémentées. Aucun test d'intégrité n'est effectué dans le code. Cette API est uniquement utilisée comme contexte pour les tests de performances du présent projet. L'API contient deux ressources nommées Students et Lessons. Voici quelques exemples d'utilisations :
+School API est une *API simpliste* qui permet de gérer des cours et des élèves. Toutes les méthodes CRUD sont implémentées. Aucun test d'intégrité n'est effectué dans le code. Cette API est uniquement utilisée comme contexte pour les tests de performances du présent projet. L'API contient deux ressources nommées Students et Lessons. Voici quelques exemples d'utilisations :
 
 #### Students Collection [/students]
 ##### List all Students [GET]
@@ -262,7 +262,7 @@ Le plan de test développé, effectue trois étapes :
 
 ##### 1 - Generate Data
 
-Cette première étape génére les donnnées nécessaires au test. 200 étudiants (100 "John Smith" et 100 "Jane Doe" et 100 cours ("OSF") sont créés. A chaque cours est attribué deux étudiants.
+Cette première étape génère les données nécessaires au test. 200 étudiants (100 "John Smith" et 100 "Jane Doe" et 100 cours ("OSF") sont créés. A chaque cours est attribué deux étudiants.
 
 ##### 2 - Test
 
@@ -290,7 +290,7 @@ Le test s'effectue, pour chaque configuration, en douze étapes simulant une uti
 11. Suppression de l'étudiant (DELETE /students/id)
 12. 10x Get de tous les étudiants (GET /students)
 
-Pour observer les différences entre les configurations lors d'une montée en charge, ce test a été lancé avec différents nombres de threads (10 / 50 / 100). Pour avoir des statistiques cohérantes les mesures sont calculées avec 5 itérations.
+Pour observer les différences entre les configurations lors d'une montée en charge, ce test a été lancé avec différents nombres de threads (10 / 50 / 100). Pour avoir des statistiques cohérentes les mesures sont calculées avec 5 itérations.
 
 ##### 3 - Remove all Data
 
@@ -317,7 +317,7 @@ Voici les résultats obtenus regroupés par opération et configuration. Les val
 
 Comme on peut le constater dans ces résultats, l'utilisation d'un cluster avec une faible charge n'amène pas de meilleures performances. Cela a même tendance à ajouter un certains temps de latence supplémentaire, probablement dû au temps pris pour passer par le *load balancer*.
 
-Par contre, l'utilisation du cache améliore grandement les performances lors des opérations *GET* (environ 50%) et ne péjore pas vraiment les perforances lors des autres opérations.
+Par contre, l'utilisation du cache améliore grandement les performances lors des opérations *GET* (environ 50%) et n'impacte pas vraiment les performances lors des autres opérations.
 
 ##### 50 threads simultanés (x5 itérations)
 
@@ -362,13 +362,13 @@ Le cache améliore, donc, d'environ 40% les performances et le cluster de seulem
 
 L'utilisation du cache améliore nettement les performances. D'après nos tests, ceci diminue d'environ 40% les temps de réponses généraux. 
 
-Avec une faible charge, seules les opérations "GET" sont améliorée par l'utilisation du cache. Les autres opérations ne sont pas tellement impactée. En effet, la mise à jour du cache est rapide et ne péjore pas signifivativement les performances.
+Avec une faible charge, seules les opérations "GET" sont améliorée par l'utilisation du cache. Les autres opérations ne sont pas tellement impactée. En effet, la mise à jour du cache est rapide et ne péjore pas significativement les performances.
 
-Par contre, lors d'une montée en charge, les serveurs et la base de données étant moins solicitées par les opérations "GET", les autres opérations peuvent ainsi bénéficier de plus de ressources et gagner en performance.
+Par contre, lors d'une montée en charge, les serveurs et la base de données étant moins sollicitées par les opérations "GET", les autres opérations peuvent ainsi bénéficier de plus de ressources et gagner en performance.
 
 Le cache ne s'utilise, cependant pas dans toutes les utilisations et peut nuire aux performances s'il est mal utilisé. 
 
-Tout d'abord, si les clients réalisent beaucoups plus d'opération de mise à jour (PUT, POST, DELETE) que de "GET" alors le cache n'améliora pas les performances.
+Tout d'abord, si les clients réalisent beaucoup plus d'opération de mise à jour (PUT, POST, DELETE) que de "GET" alors le cache n'améliora pas les performances.
 
 Ensuite, il faut faire attention de ne mettre que les informations utiles en cache. En effet, il ne faut pas oublié que chaque valeur mise en cache utilise de la mémoire. Si à cause du cache, la machine doit paginé alors les performances peuvent être désastreuse. 
 
@@ -376,8 +376,18 @@ En résumé, le cache, s'il est bien utilisé et dans certains cas, peut grandem
 
 #### Question 2: How is it possible to use a caching layer in a cluster environment, when several Play “nodes” are setup to serve HTTP requests?
 
-##### Memcached
-*Explain what is means to use a caching layer in a cluster environment and what are the issues to consider. Explain how Ehcache addresses these issues.*
+Pour faire fonctionner Memcached en cluster, les serveurs ont besoins, tout d'abord de se connaître entre eux. Pour ceci avec Play, il suffit de spécifier les adresses IP des tous les serveurs Mecached dans la configuration de chaque serveur Play.
+
+Pour éviter des problèmes de synchronisation, les valeurs mises en cache sont stockée que sur un serveur. Les informations sont réparties automatiquement entre les différents serveurs lors de leur enregistrement. Pour réaliser ceci, Memcached calcule un hash sur la clé et applique un modulo sur le hash, le résultat obtenu indique sur quel serveur la valeur doit être enregistrée.
+
+	num_serveur = hash(clé) % nb_serveurs
+	
+Le fait d'utilisé une fonction de hachage permet une répartition équitable des valeurs entre les serveurs.
+
+Lors de la lecture de données, le même mécanisme est appliqué. Le numéro du serveur sur lequel la valeur doit être est calculé grâce au hash de la clé. Le plugin Memcached pour Play peut ainsi demander directement la valeur au bon serveur Memcached.
 
 ### Conclusion
-*Avis sur Play Framework (et sa documentation...) et sur le cache*
+
+Nous avons réussi a mettre en place Play en cluster avec un mécanisme de cache distribué. Cependant, tout n'a pas été toujours très facile à mettre en place. Tout d'abord, Play Framework a tendance à changer beaucoup de mécanismes entre chaque version. Cette évolution rapide n'est malheureusement pas toujours bien documentée. Nous avons, par exemple, eu de la peine à trouver comment faire fonctionner le cache avec la version 2.2. Alors que sur la version 2.1, le plugin était activé par défaut. De plus, la documentation de Play est plus complète dans la version Scala que la version Java. Pour finir, il manque un exemple simple d'une API rest fait avec Play qui permettrait de commencer rapidement à travailler avec Play. Une fois le module Memcached activé et les principes de bases de Play assimilés, Play et le cache sont, cependant, assez faciles a utiliser.
+
+Nous avons pu remarquer dans ce projet que l'ajout de plusieurs serveurs Play n'aident pas toujours significativement l'amélioration les performances et que la mise en place du cache peut être plus efficace.
