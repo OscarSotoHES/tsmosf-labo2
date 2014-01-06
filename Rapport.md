@@ -376,18 +376,18 @@ En résumé, le cache, s'il est bien utilisé et dans certains cas, peut grandem
 
 #### Question 2: How is it possible to use a caching layer in a cluster environment, when several Play “nodes” are setup to serve HTTP requests?
 
-Pour faire fonctionner Memcached en cluster, les serveurs ont besoins, tout d'abord de se connaître entre eux. Pour ceci avec Play, il suffit de spécifier les adresses IP des tous les serveurs Mecached dans la configuration de chaque serveur Play.
+Pour faire fonctionner Memcached en cluster, les serveurs ont besoins, tout d'abord de se connaître entre eux. Pour ceci avec Play, il suffit de spécifier les adresses IP des tous les serveurs Memcached dans la configuration de chaque serveur Play.
 
-Pour éviter des problèmes de synchronisation, les valeurs mises en cache sont stockée que sur un serveur. Les informations sont réparties automatiquement entre les différents serveurs lors de leur enregistrement. Pour réaliser ceci, Memcached calcule un hash sur la clé et applique un modulo sur le hash, le résultat obtenu indique sur quel serveur la valeur doit être enregistrée.
+Pour éviter des problèmes de synchronisation, les valeurs mises en cache sont stockées que sur un serveur. Les informations sont réparties automatiquement entre les différents serveurs lors de leur enregistrement. Pour réaliser ceci, Memcached calcule un hash sur la clé et applique un modulo sur le hash, le résultat obtenu indique sur quel serveur la valeur doit être enregistrée.
 
 	num_serveur = hash(clé) % nb_serveurs
 	
 Le fait d'utilisé une fonction de hachage permet une répartition équitable des valeurs entre les serveurs.
 
-Lors de la lecture de données, le même mécanisme est appliqué. Le numéro du serveur sur lequel la valeur doit être est calculé grâce au hash de la clé. Le plugin Memcached pour Play peut ainsi demander directement la valeur au bon serveur Memcached.
+Lors de la lecture de données, le même mécanisme est appliqué. Le numéro du serveur sur lequel la valeur doit être est calculée grâce au hash de la clé. Le plugin Memcached pour Play peut ainsi demander directement la valeur au bon serveur Memcached.
 
 ### Conclusion
 
-Nous avons réussi a mettre en place Play en cluster avec un mécanisme de cache distribué. Cependant, tout n'a pas été toujours très facile à mettre en place. Tout d'abord, Play Framework a tendance à changer beaucoup de mécanismes entre chaque version. Cette évolution rapide n'est malheureusement pas toujours bien documentée. Nous avons, par exemple, eu de la peine à trouver comment faire fonctionner le cache avec la version 2.2. Alors que sur la version 2.1, le plugin était activé par défaut. De plus, la documentation de Play est plus complète dans la version Scala que la version Java. Pour finir, il manque un exemple simple d'une API rest fait avec Play qui permettrait de commencer rapidement à travailler avec Play. Une fois le module Memcached activé et les principes de bases de Play assimilés, Play et le cache sont, cependant, assez faciles a utiliser.
+Nous avons réussi a mettre en place Play en cluster avec un mécanisme de cache distribué. Cependant, tout n'a pas été toujours très facile à mettre en place. Tout d'abord, Play Framework a tendance à changer beaucoup de mécanismes entre chaque version. Cette évolution rapide n'est malheureusement pas toujours bien documentée. Nous avons, par exemple, eu de la peine à trouver comment faire fonctionner le cache avec la version 2.2. Alors que sur la version 2.1, le plugin était activé par défaut. De plus, la documentation de Play est plus complète dans la version Scala que la version Java. Pour finir, il manque un exemple simple d'une API rest faite avec Play qui permettrait de commencer rapidement à travailler avec Play. Une fois le module Memcached activé et les principes de bases de Play assimilés, Play et le cache sont, cependant, assez faciles a utiliser.
 
-Nous avons pu remarquer dans ce projet que l'ajout de plusieurs serveurs Play n'aident pas toujours significativement l'amélioration les performances et que la mise en place du cache peut être plus efficace.
+Nous avons pu remarquer dans ce projet que l'ajout de plusieurs serveurs Play n'aident pas toujours significativement l'amélioration des performances et que la mise en place du cache peut être parfois plus efficace.
