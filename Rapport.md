@@ -15,7 +15,7 @@ Après ce bref descriptif, nous pouvons relever que les données de session avec
 
 ### API Rest
 
-School API est une *API simpliste* qui permet de gérer des cours et des élèves. Toutes les méthodes CRUD sont implémentées. Aucun test d'intégrité n'est effectué dans le code. Cette API est uniquement utilisée comme contexte pour les tests de performances du présent projet. L'API contient deux ressources nommées Students et Lessons. Voici quelques exemples d'utilisations :
+School API est une *API simpliste* qui permet de gérer des cours et des élèves. Toutes les méthodes CRUD sont impémentées. Aucun test d'intégrité n'est effectué dans le code. Cette API est uniquement utilisée comme contexte pour les tests de performances du présent projet. L'API contient deux ressources nommées Students et Lessons. Voici quelques exemples d'utilisations :
 
 #### Students Collection [/students]
 ##### List all Students [GET]
@@ -262,7 +262,7 @@ Le plan de test développé, effectue trois étapes :
 
 ##### 1 - Generate Data
 
-Cette première étape génère les données nécessaires au test. 200 étudiants (100 "John Smith" et 100 "Jane Doe" et 100 cours ("OSF") sont créés. A chaque cours est attribué deux étudiants.
+Cette première étape génére les donnnées nécessaires au test. 200 étudiants (100 "John Smith" et 100 "Jane Doe" et 100 cours ("OSF") sont créés. A chaque cours est attribué deux étudiants.
 
 ##### 2 - Test
 
@@ -290,7 +290,7 @@ Le test s'effectue, pour chaque configuration, en douze étapes simulant une uti
 11. Suppression de l'étudiant (DELETE /students/id)
 12. 10x Get de tous les étudiants (GET /students)
 
-Pour observer les différences entre les configurations lors d'une montée en charge, ce test a été lancé avec différents nombres de threads (10 / 50 / 100). Pour avoir des statistiques cohérentes les mesures sont calculées avec 5 itérations.
+Pour observer les différences entre les configurations lors d'une montée en charge, ce test a été lancé avec différents nombres de threads (10 / 50 / 100). Pour avoir des statistiques cohérantes les mesures sont calculées avec 5 itérations.
 
 ##### 3 - Remove all Data
 
@@ -317,7 +317,7 @@ Voici les résultats obtenus regroupés par opération et configuration. Les val
 
 Comme on peut le constater dans ces résultats, l'utilisation d'un cluster avec une faible charge n'amène pas de meilleures performances. Cela a même tendance à ajouter un certains temps de latence supplémentaire, probablement dû au temps pris pour passer par le *load balancer*.
 
-Par contre, l'utilisation du cache améliore grandement les performances lors des opérations *GET* (environ 50%) et n'impacte pas vraiment les performances lors des autres opérations.
+Par contre, l'utilisation du cache améliore grandement les performances lors des opérations *GET* (environ 50%) et ne péjore pas vraiment les perforances lors des autres opérations.
 
 ##### 50 threads simultanés (x5 itérations)
 
@@ -353,7 +353,7 @@ Avec cent threads nous obtenons sensiblement le même rapport de performances en
 
 Le cache améliore, donc, d'environ 40% les performances et le cluster de seulement 20%.
 
-![Comparaison des performances](https://github.com/yenyen/tsmosf-labo2/blob/master/Presentation/GraphiquePerformances.png)
+![Comparaison des performances](https://github.com/yenyen/tsmosf-labo2/raw/master/Presentation/GraphiquePerformances.png)
 
 
 ### Questions
@@ -362,13 +362,13 @@ Le cache améliore, donc, d'environ 40% les performances et le cluster de seulem
 
 L'utilisation du cache améliore nettement les performances. D'après nos tests, ceci diminue d'environ 40% les temps de réponses généraux. 
 
-Avec une faible charge, seules les opérations "GET" sont améliorée par l'utilisation du cache. Les autres opérations ne sont pas tellement impactée. En effet, la mise à jour du cache est rapide et ne péjore pas significativement les performances.
+Avec une faible charge, seules les opérations "GET" sont améliorée par l'utilisation du cache. Les autres opérations ne sont pas tellement impactée. En effet, la mise à jour du cache est rapide et ne péjore pas signifivativement les performances.
 
-Par contre, lors d'une montée en charge, les serveurs et la base de données étant moins sollicitées par les opérations "GET", les autres opérations peuvent ainsi bénéficier de plus de ressources et gagner en performance.
+Par contre, lors d'une montée en charge, les serveurs et la base de données étant moins solicitées par les opérations "GET", les autres opérations peuvent ainsi bénéficier de plus de ressources et gagner en performance.
 
 Le cache ne s'utilise, cependant pas dans toutes les utilisations et peut nuire aux performances s'il est mal utilisé. 
 
-Tout d'abord, si les clients réalisent beaucoup plus d'opération de mise à jour (PUT, POST, DELETE) que de "GET" alors le cache n'améliora pas les performances.
+Tout d'abord, si les clients réalisent beaucoups plus d'opération de mise à jour (PUT, POST, DELETE) que de "GET" alors le cache n'améliora pas les performances.
 
 Ensuite, il faut faire attention de ne mettre que les informations utiles en cache. En effet, il ne faut pas oublié que chaque valeur mise en cache utilise de la mémoire. Si à cause du cache, la machine doit paginé alors les performances peuvent être désastreuse. 
 
